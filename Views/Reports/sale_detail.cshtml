@@ -1,0 +1,99 @@
+﻿@model IEnumerable<Transport.Models.Invoice>
+
+@{
+    ViewBag.Title = "Supplier Sales Detail";
+    Layout = null;
+}
+
+<link href="~/Content/bootstrap.css" rel="stylesheet" />
+<link href="~/Content/report.css" rel="stylesheet" />
+<div class="main-1">
+    <div class="container">
+        <table class="table-condensed" style="width:100%">
+                <tr>
+                    <td colspan='2' class="tblock" style="text-align:left;font-size:12px">Branch:- @ViewBag.Branch </td>
+                    <th colspan='5' class="tblock"><b>Supplier Sales Detail</b></th>
+                    <td colspan='2' class="tblock" >Print Date @DateTime.Now.Date.ToString("dd-MMM-yyyy")</td>
+                </tr>
+                <tr>
+                    <td colspan='9' style="text-align:center;font-size:14px;font-weight:bold">@ViewBag.From_Party</td>
+                </tr>
+                <tr>
+                    <td colspan='9' style="text-align:center;"><span style="border:1px solid #ccc;padding:5px;border-radius:2px">@ViewBag.From_Date TO  @ViewBag.To_Date</span></td>
+                </tr>
+                @if (@ViewBag.To_Party != "ALL")
+                {
+                    <tr>
+                        <td colspan='9' style="text-align:center;font-weight:600">@ViewBag.To_Party </td>
+                    </tr>
+                }
+                @foreach (var sitem in Model.GroupBy(x => new { x.Supplier_Id, Supplier = x.Company2.Name }))
+                {        
+                <tr>
+                    <th colspan='9' style="text-align:center;font-size:14px;background-color:Silver;color:White">@sitem.Key.Supplier</th>
+                </tr>
+                <tr >
+                    <th class="tblock">SNo</th>
+                    <th class="tblock">Date</th>
+                    <th class="tblock">Inv </th>
+                    <th class="tblock">Truck No </th>
+                    <th class="tblock">Wgt </th>
+                    <th class="tblock">Rate </th>
+                    <th class="tblock">Inv Amt </th>
+                    <th class="tblock">Vat Amt </th>
+                    <th class="tblock">Total</th>
+                </tr>
+                    foreach (var gitem in Model.Where(x => x.Supplier_Id == sitem.Key.Supplier_Id).GroupBy(x => x.Company_Id).Select(x => new { x.Key, Invoice_Amount = x.Sum(y => y.Invoice_Amount), VAT_Amount = x.Sum(y => y.VAT_Amount), G_Amount = x.Sum(y => (y.VAT_Amount + y.Invoice_Amount)),TotWgt = Math.Round( x.Sum(y => (y.Weight)),3) }))
+                    {
+                    <tr>
+                        <th >To Party</th>
+                        <th colspan="9">@Model.Where(x => x.Supplier_Id == sitem.Key.Supplier_Id && x.Company_Id == gitem.Key).FirstOrDefault().Company.Name</th>
+                    </tr>
+                        int I = 1;
+                        foreach (var pitem in Model.Where(x => x.Supplier_Id == sitem.Key.Supplier_Id && x.Company_Id == gitem.Key).GroupBy(x => new { x.Product_Id, x.Product.Name }).Select(x => new { Product_Id = x.Key.Product_Id, Name = x.Key.Name, Invoice_Amount = x.Sum(y => y.Invoice_Amount), VAT_Amount = x.Sum(y => y.VAT_Amount), G_Amount = x.Sum(y => (y.VAT_Amount + y.Invoice_Amount)),  TotWgt = Math.Round( x.Sum(y => (y.Weight)),3) }).ToArray())
+                        { 
+                    <tr>
+                        <th colspan="9" style="text-align: left;background-color:#DBEA83">[M]-> @pitem.Name</th>
+                    </tr>
+                    
+                            foreach (var item in Model.Where(x => x.Supplier_Id == sitem.Key.Supplier_Id && x.Company_Id == gitem.Key && x.Product_Id == pitem.Product_Id).ToArray())
+                            {
+                                <tr>
+                                    <td>@(I++)</td>
+                                    <td>@item.Invoice_Date.ToString("dd-MMM-yyyy")</td>
+                                    <td>@item.Invoice_No</td>
+                                    <td>@item.Truck_No</td>
+                                    <td>@item.Weight</td>
+                                    <td>@item.B_Rate</td>
+                                    <td>@item.Invoice_Amount</td>
+                                    <td>@item.VAT_Amount</td>
+                                    <td>@(item.Invoice_Amount + item.VAT_Amount)</td>
+                                </tr>
+                            }
+                    <tr>
+                        <th colspan='4' style="text-align: right;background-color:White"> Total :</th>
+                        <th>@pitem.TotWgt</th>
+                        <th>&nbsp;</th>
+                        <th>@pitem.Invoice_Amount</th>
+                        <th>@pitem.VAT_Amount</th>
+                        <th>@pitem.G_Amount</th>
+                    </tr>
+                        }
+                       <tr>
+                        <th colspan='4' style="text-align: right;background-color:Navy;color:White">Grand Total :</th>
+                        <th>@gitem.TotWgt</th>
+                        <th>&nbsp;</th>
+                        <th>@gitem.Invoice_Amount</th>
+                        <th>@gitem.VAT_Amount</th>
+                        <th>@gitem.G_Amount</th>
+                       </tr>
+                    <tr>
+                        <th colspan="9" style="background:none;border:none">&nbsp;</th>
+                    </tr>
+
+                    }
+            }
+        
+        </table>
+    </div>
+</div>

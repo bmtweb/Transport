@@ -1,0 +1,73 @@
+﻿@model PagedList.IPagedList<Transport.Models.Mine>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        if ($('#divmsg').html().trim().length > 1) {
+            $('#divmsg').dialog();
+        }
+    })
+</script>
+<div class="warning" id="divmsg" title="Message">
+            @TempData["message"]
+        </div>
+<div class="main-1">
+    <div class="container">
+        <ul class="breadcrumb">
+                <li><a href="#">Master</a></li>
+                <li><a href="#">Mine</a></li>
+            </ul>
+        <div class="btn-group">
+            @Html.ActionLink("Add New Mine Detail", "Mine", new { id = 0 }, new { @class = "btn btn-info btn-small" })
+        </div>
+       
+        <table class="table table-condensed" style="width:100%;margin:15px 10px 0px 5px;">
+            <tr>
+                <th class="tblock"> S No.
+                </th>
+                <th class="tblock">
+                    @Html.DisplayName("Mines Name")
+                </th>
+                <th class="tblock">
+                    @Html.DisplayName("Status")
+                </th>
+                <th class="tblock"></th>
+            </tr>
+            @{
+            int I = 1;
+            foreach (var item in Model)
+            { 
+                <tr>
+                    <td style="text-align:center" >
+                        @(I++)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Status)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Mine", new { id = item.Id })
+                    </td>
+                </tr>
+            }
+            }
+                    <tr><td style="background-color:#49607C" colspan="4"></td></tr>
+
+        </table>
+        <div>
+                  Page  @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+                    @Html.PagedListPager(Model, page => Url.Action("Index",new { page}))
+                </div>
+        <br />
+        <br />
+    </div>
+</div>
+
+
+

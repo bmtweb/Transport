@@ -1,0 +1,66 @@
+﻿@model IEnumerable<Transport.Models.Invoice>
+
+@{
+    ViewBag.Title = "tptbb_all_detail";
+    Layout = null;
+}
+
+<link type="text/css" href="~/Content/bootstrap.css" rel="stylesheet" />
+<link type="text/css" href="~/Content/report.css" rel="stylesheet" />
+<div class="main-1">
+    <div class="container">
+        <table class="table-condensed" style="width: 70%;">
+            <tr>
+                <th colspan='7' class="tblock"><b>@ViewBag.btype ( @ViewBag.ptype)</b></th>
+            </tr>
+            <tr>
+                <td colspan='10' style="text-align:center;font-size:14px;font-weight:bold">@ViewBag.From_Party</td>
+            </tr>
+            <tr>
+                <td colspan='10' style="text-align:center;"><span style="border:1px solid #ccc;padding:5px;border-radius:2px">@ViewBag.From_Date <b>TO</b> @ViewBag.To_Date</span></td>
+            </tr>
+            <tr>
+                <td colspan='10' style="text-align:center;font-weight:600">@ViewBag.To_Party </td>
+            </tr>
+            <tr>
+                <th>S.NO</th>
+                <th>Bilty No</th>
+                <th>Bilty Date</th>
+                <th>Due Amt </th>
+                <th>Paid Amt </th>
+                <th>Paid Date </th>
+                <th>Remark</th>
+            </tr>
+            @foreach (var gitem in Model.GroupBy(x => new { x.Transport_Id, Supplier = x.Company1.Name }))
+            {
+                <tr>
+                    <th  colspan="7" class="grpblock2">@gitem.Key.Supplier</th>
+                </tr>
+                int I = 1;
+                foreach (var item in Model.Where(x => x.Transport_Id == gitem.Key.Transport_Id).ToArray())
+                {
+                <tr>
+                    <td>@(I++)</td>
+                    <td>@item.Billty_No</td>
+                    <td>@item.Invoice_Date.ToString("dd-MMM-yyyy")</td>
+                    <td style="text-align: right;">@item.Deposit_Amount</td>
+                    <td style="text-align: right;">@item.Paid_Amount</td>
+                    <td>@item.Paid_Date</td>
+                    <td></td>
+                </tr>
+                }
+                <tr>
+                    <th colspan='3' class="grpblock2">Total :</th>
+                    <th style="text-align: right;">@Model.Where(x => x.Transport_Id == gitem.Key.Transport_Id).Sum(x => x.Deposit_Amount)</th>
+                    <th style="text-align: right;">@Model.Where(x => x.Transport_Id == gitem.Key.Transport_Id).Sum(x => x.Paid_Amount)</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                <tr>
+                <td colspan='7'></td>
+            </tr>
+            }
+        </table>
+    </div>
+</div>
+

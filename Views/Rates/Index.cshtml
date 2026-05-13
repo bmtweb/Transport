@@ -1,0 +1,110 @@
+﻿@model PagedList.IPagedList<Transport.Models.Invoice_Rates>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    $(document).ready(function () {
+        
+        if ($('#divmsg').html().trim().length > 1) {
+            $('#divmsg').dialog();
+        }
+    })
+</script>
+<div class="warning" id="divmsg" title="Message">
+            @TempData["message"]
+        </div>
+<div class="main-1">
+    <div class="container">
+        <ul class="breadcrumb">
+                <li><a href="#">Master</a></li>
+                <li><a href="#">Invoice Rates</a></li>
+            </ul>
+        @using (Html.BeginForm())
+        {
+            <div class="btn-group">
+                @Html.ActionLink("Add New Invoice Rate", "rate", new { id = 0 }, new { @class = "btn btn-info btn-small" })
+            </div>
+            <div class="btn-group" style="float:right">
+            <label class="btn btn-info" style="background-color:ActiveCaption;color:White">Select Company </label>
+                @Html.DropDownList("ddlType", ((SelectList)ViewBag.Companies), new { @class = "btn" })
+                <input type="submit" value="Show" class="btn btn-info btn-small"/>
+            </div>
+        
+        <div class="row form-horizontal">
+            <div class="form-group">
+                <table class="table table-condensed" style="width:95%;margin:15px 0px 0px 22px;">
+                    <tr>
+                        <th class="tblock">
+                            <div class="col-xs-12">
+                                <div class="col-md-4">
+                                    <div class="col-md-6">Company</div>
+                                    <div class="col-md-6">Supplier</div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="col-md-12">Material</div>
+
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="col-xs-5">Transport</div>
+                                    <div class="col-xs-3">Rate</div>
+                                    <div class="col-xs-2">Action</div>
+                                     <div class="col-xs-2">Status</div>
+                                </div>
+                            </div>
+                        </th>
+                    </tr>
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                <div class="col-xs-12">
+                                    <div class="col-md-4">
+                                        <div class="col-md-6" >@item.Company1.Name</div>
+                                        <div class="col-md-6">@item.Company.Name</div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="col-md-12">@item.Product.Name</div>
+
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="col-xs-5" style="text-align:center">@item.Company2.Name</div>
+                                        <div class="col-xs-3">@item.B_Rate</div>
+                                        <div class="col-xs-2">
+                                       @* @Html.ActionLink("Edit", "Rate", new { id = item.Id })*@
+                                        
+                                        <a href="@Url.Action("Rate", "Rates", new { id = item.Id })" title="Click to Edit">
+                                            <img src="@Url.Content("~/Content/images/edit.png")"  alt="EDIT"/>
+                                        </a>
+                                        </div>
+                                        @{ bool yourBooleanFlag = bool.Parse(@item.Active.ToString()); }
+
+                                        @if (yourBooleanFlag)
+                                        {
+                                        <div class="col-xs-2"><span class="label label-success">Active</span></div>
+                                        }
+                                        else
+                                        { 
+                                        <div class="col-xs-2"><span class="label label-danger">Inactive</span></div>
+                                        }
+                                        
+                                    </div>
+                                </div>
+                                </td>
+                        </tr>
+                    }
+                    <tr><td style="background-color:#49607C" colspan="6"></td></tr>
+                </table>
+            </div>
+        </div>
+            <div>
+                  Page  @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+                    @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
+                </div>
+        }
+        <br />
+        <br />
+    </div>
+</div>

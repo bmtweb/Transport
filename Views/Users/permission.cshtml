@@ -1,0 +1,63 @@
+﻿@model IEnumerable<Transport.Models.Permission>
+
+@{
+    ViewBag.Title = "permission";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="main-1">
+
+    <div class="container">
+        <ul class="breadcrumb">
+            <li><a href="#">Master</a></li>
+            <li><a href="#">Permission</a></li>
+        </ul>
+
+        @using (Html.BeginForm())
+        {
+            @Html.ValidationSummary(true)
+            <table class="table table-responsive">
+                <tr>
+                    <th>
+                        @Html.DropDownList("Role_Id", (SelectList)ViewBag.Roles, new { @class = "form-control" })
+                    </th>
+                </tr>
+                <script type="text/javascript">
+                    $('body').on('change', '#Role_Id', function () {
+                        var selectedValue = $(this).val();
+                        location.href = "/users/permission/" + $(this).val();
+                    });
+                </script>
+                @foreach (var item in ((IEnumerable<Transport.Models.Menu>)ViewBag.Menus).Where(x => x.Perent_Id == 0))
+                {
+                    <tr>
+                        <td>
+                            <b>@Html.DisplayFor(modelItem => item.Menu1)</b>
+                            <table>
+                                @foreach (var it in ((IEnumerable<Transport.Models.Menu>)ViewBag.Menus).Where(x => x.Perent_Id == item.Id))
+                                {
+                                    <tr>
+                                        <td>&nbsp;-</td>
+                                        <td>
+                                            <input type="checkbox" id="chk_@it.Id" name="chk_@it.Id" @(Model.Where(x=> x.Menu_Id== it.Id).Count()> 0 ?"checked":"unchecked") /></td>
+                                        <td>@Html.DisplayFor(modelItem => it.Menu1)</td>
+                                    </tr> 
+                                }
+                            </table>
+                        </td>
+                    </tr>
+                }
+
+            </table>
+            <div class="form-horizontal">
+                <div class="button">
+                    <input type="submit" value="Save" class="btn">
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                </div>
+            </div>
+        }
+    </div>
+</div>

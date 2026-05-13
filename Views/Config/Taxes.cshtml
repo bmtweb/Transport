@@ -1,0 +1,144 @@
+﻿@model Transport.Models.Taxes
+
+@{
+    ViewBag.Title = "Taxes";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    $(document).ready(function () {
+        
+        if ($('#divmsg').html().trim().length > 1) {
+            $('#divmsg').dialog();
+        }
+    })
+</script>
+
+<div class="main-1">
+
+    <div class="warning" id="divmsg" title="Message">
+            @TempData["message"]
+        </div>
+    <div class="container">
+        <ul class="breadcrumb">
+            <li><a href="#">Master</a></li>
+            <li><a href="#">Freight</a></li>
+            <li><a href="#">Add/Edit</a></li>
+        </ul>
+        @using (Html.BeginForm())
+        {
+            @Html.ValidationSummary(true)
+            <div class="form-horizontal">
+                <fieldset>
+                    <legend>Taxes Details</legend>
+                    <div class="row form-horizontal">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <div class="col-md-12">
+                                    @Html.LabelFor(model => model.VAT, new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(model => model.VAT, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.VAT)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row form-horizontal">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <div class="col-md-12">
+                                    @Html.LabelFor(model => model.Other_VAT, new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(model => model.Other_VAT, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.Other_VAT)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row form-horizontal">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <div class="col-md-12">
+                                    @Html.LabelFor(model => model.Taxable, new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(model => model.Taxable, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.Taxable)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="row form-horizontal">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <div class="col-md-12">
+                                @{
+                                    var format = "d";
+                                    if (DateTime.Today >= DateTime.ParseExact("07/01/2017", format, System.Globalization.CultureInfo.InvariantCulture))
+                                    {
+                                        @Html.Label("GST(%)", new { @class = "control-label" })
+                                    }
+                                    else
+                                    {
+                                        @Html.Label("Service Tax(%)", new { @class = "control-label" })
+                                    }
+                                  }
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(model => model.ServiceTax, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.ServiceTax)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="row form-horizontal">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <div class="col-md-12">
+                                    @Html.LabelFor(model => model.Education_Cess, new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(model => model.Education_Cess, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.Education_Cess)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="row form-horizontal">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <div class="col-md-12">
+                                    @Html.LabelFor(model => model.SHEC, new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-3">
+                                    @Html.TextBoxFor(model => model.SHEC, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.SHEC)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </fieldset>
+            </div>
+            <div class="form-horizontal">
+                <div class="button">
+
+                    <input type="submit" value="Update" class="btn btn-info">
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

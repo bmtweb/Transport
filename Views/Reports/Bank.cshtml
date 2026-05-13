@@ -1,0 +1,76 @@
+﻿@model IEnumerable<Transport.Models.Transaction>
+
+@{
+    ViewBag.Title = "Bank Statement";
+    Layout = null;
+}
+
+<link type="text/css" href="~/Content/report.css" rel="stylesheet" />
+<link type="text/css" href="~/Content/bootstrap.css" rel="stylesheet" />
+<div class="main-1">
+    <div class="container">
+        <table class="table  table-condensed" >
+                <tr>
+                    @if (ViewBag.RateBy == "Cash Rate")
+                    {
+                    <th  colspan='5' class="tblock" style="font-size:14px"><b>* Receipt Statement *</b></th>
+                    }
+                    else
+                    {
+                    <th  colspan='5' class="tblock" style="font-size:14px"><b>Receipt Statement </b></th>
+                    }
+                </tr>
+                <tr>
+                    <td colspan='5' style="text-align:center;font-size:14px;font-weight:bold">@ViewBag.From_Party</td>
+                </tr>
+                <tr>
+                    <td colspan='5' style="text-align:center;"><span style="border:1px solid #ccc;padding:5px;border-radius:2px">@ViewBag.From_Date TO  @ViewBag.To_Date</span></td>
+                </tr>
+                @if (@ViewBag.To_Party != "ALL")
+                {
+                    <tr>
+                        <td colspan='5' style="text-align:center;font-weight:600">@ViewBag.To_Party </td>
+                    </tr>
+                }
+                <tr>
+                    <th>S.NO</th>
+                    <th>Date</th>
+                    <th>Particular</th>
+                    <th>Cheque No</th>
+                    <th>Amount(Rs.)</th>
+                </tr>
+            @{
+                int I = 1;
+                foreach (var item in Model.ToArray())
+                {
+                <tr>
+                    <td>@(I++)</td>
+                    <td>@item.Voucher_Date.ToString("dd-MMM-yyyy")</td>
+                    @if (@ViewBag.To_Party != "ALL")
+                    {
+                        <td>@item.Particular</td>
+                    }
+                    else
+                    {
+                        <td>@item.Company1.Name</td>
+                    }                    
+                    <td>@item.Voucher_No.ToString()</td>
+                    <td>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", item.Amount1)</td>
+                </tr>
+                }
+            }
+            <tr>
+                <th colspan='4'>Total (Rs)</th>
+                <th>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}",Model.Sum(x => x.Amount1))</th>
+            </tr>
+            <tr>
+                <th colspan='4'>In Words (Rs)</th>
+                <th  style="text-align:left">@((new Transport.Converter.IndiaCurrencyConverter()).ConvertToWord(Model.Sum(x => x.Amount1).ToString("##"), null))</th>
+            </tr>
+            <tr>
+                <td colspan='5' class="tblock" >Print Date @DateTime.Now.Date.ToString("dd-MMM-yyyy")</td>
+            </tr>
+
+        </table>
+    </div>
+</div>

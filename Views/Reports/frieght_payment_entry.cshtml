@@ -1,0 +1,109 @@
+﻿@model IEnumerable<Transport.Models.Invoice>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "Frieght Payment Entry";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script>
+    $(document).ready(function () {
+        $(".text").change(function () {
+            var diff = (parseFloat($(this).parents("tr").find(".deposit").val()) - parseFloat($(this).val()))
+            $(this).parents("tr").find(".diff").val(diff);
+        })
+        $(".chk").change(function () {
+            var id = "#" + $(this).attr("id");
+            if ($(id).val() == "true") {
+                $(id).val("false");
+                $(this).parents("tr").find(".text").removeAttr("disabled");
+                $(this).parents("tr").find(".text").val("0");
+            } else {
+                $(id).val("true");
+                $(this).parents("tr").find(".text").attr("disabled", "disabled");
+                $(this).parents("tr").find(".text").val("");
+            }
+
+        })
+        $(".refresh").change(function () {
+            location.href = "/Reports/frieght_payment_entry?comp=" + $("#ddlcomp").val() + "&bilty=" + $("#bilty").val();
+        });
+    })
+</script>
+
+<div class="main-1">
+    <div class="container">
+        <ul class="breadcrumb">
+            <li><a href="#">Reports</a></li>
+            <li><a href="#">Frieght Payment Entry</a></li>
+        </ul>
+        @using (Html.BeginForm())
+        {
+            <div class="btn-group">
+                @Html.DropDownList("ddlcomp", ((SelectList)ViewBag.Companies), new { @class = "btn refresh" })
+                @Html.DropDownList("bilty", ((SelectList)ViewBag.Bilty), new { @class = "btn refresh" })
+            </div>
+            <div style="overflow:auto;max-height:500px;">
+            <table class="table table-responsive">
+                <tr>
+                    <th>
+                        <div class="col-md-12">
+                            <div class="col-md-5">
+                                <div class="col-xs-4"></div>
+                                <div class="col-xs-4">Bilty No</div>
+                                <div class="col-xs-4">Date</div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="col-xs-12">Due Amt</div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="col-xs-12">Paid Amt</div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="col-xs-12">Diff Amt</div>
+                            </div>
+                        </div>
+                    </th>
+                </tr>
+
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <div class="col-md-12">
+                                <div class="col-md-5">
+                                    <div class="col-xs-4">
+                                        <input type="checkbox" id="chk_@item.Id"  name="chk_@item.Id" value="true"  class = "chk" />
+                                    </div>
+                                    <div class="col-xs-4">@item.Billty_No</div>
+                                    <div class="col-xs-4">@item.Invoice_Date.ToString("dd/MMM/yyyy")</div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="col-xs-12">@Html.TextBox("deposit", (item.Deposit_Amount - item.Advance), new { @class = "form-control deposit", @disabled = "disabled" })</div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="col-xs-12">@Html.TextBox(("Paid_" + item.Id), @item.Paid_Amount, new { @class = "form-control text", @disabled = "disabled" })</div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="col-xs-12">@Html.TextBox("diff", "", new { @class = "form-control diff", @disabled = "disabled" })</div>
+                                </div>
+                            </div>
+                    </tr>
+                }
+            </table>
+                </div>
+            <div class="form-horizontal">
+                <div class="button" style="width: 100%">
+                    <div class="btn-group">
+                        <input type="submit" value="Save" class="btn btn-info"/>
+                    </div>
+                </div>
+            </div>
+        }
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+        <br />
+    </div>
+</div>

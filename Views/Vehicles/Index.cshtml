@@ -1,0 +1,100 @@
+﻿@model PagedList.IPagedList<Transport.Models.Vehicle>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#btnFilter").click(function () {
+            location.href = "/Vehicles/?filter=" + $("#ddlFilter").val() + "&value=" + $("#txtFilter").val();
+        });
+    });
+</script>
+
+<div class="main-1">
+    <div class="container">
+        <ul class="breadcrumb">
+                <li><a href="#">Master</a></li>
+                <li><a href="#">Vehicle</a></li>
+        </ul>
+        <div class="btn-group">
+            @Html.ActionLink("Add New Truck Detail", "Vehicle", new { id = 0 }, new { @class = "btn btn-info btn-small" })
+        </div>
+        <div class="btn-group" style="float:right">
+                <label class="btn btn-info" style="background-color:ActiveCaption;color:White">Filter List By</label>
+                <select id="ddlFilter" class="btn">
+                   <option value="Truck_No">Truck No</option>
+                    <option value="Status">Status</option>
+                </select>
+                <input type="text" id="txtFilter" class="btn" style="border:solid;border-width:1px;text-align:left;width:100px"  />
+                <input type="button" class="btn btn-info " id ="btnFilter" value="Show in List" />
+         </div>
+         <table class="table table-condensed" style="margin-left:-5px;width:100%;margin-top:10px">
+         <thead>
+            <tr>
+                <th class="tblock">
+                    @Html.DisplayName("Truck No")
+                </th>
+                <th class="tblock">
+                    @Html.DisplayName("Owner Name")
+                </th>
+                <th class="tblock">
+                    @Html.DisplayName("Pan Card")
+                </th>
+                <th class="tblock">
+                    @Html.DisplayName("TDS (%)")
+                </th>
+                <th class="tblock">
+                    @Html.DisplayName("Action")
+                </th>
+                <th class="tblock">  @Html.DisplayName("Status")</th>
+            </tr>
+        </thead>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td style="font-weight:bold">
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Owner_Name)
+                    </td>
+                    <td style="text-align:center">
+                        @Html.DisplayFor(modelItem => item.Pan_Card)
+                    </td>
+                    <td style="text-align:center;font-size:14px;font-weight:bold">
+                        @Html.DisplayFor(modelItem => item.TDS_Tax)
+                    </td>
+                    
+                    <td style="text-align:center">
+                       @* @Html.ActionLink("Edit", "Vehicle", new { id = item.Id })*@
+                         <a href="@Url.Action("Vehicle", "Vehicles", new { id = item.Id })" title="Click to Edit">
+                          <img src="@Url.Content("~/Content/images/edit.png")"  alt="EDIT"/>
+                        </a>
+                    </td>
+                    <td>
+                       @* @{ bool yourBooleanFlag = bool.Parse(@item.Status.ToString()); }
+
+                        @if (yourBooleanFlag)
+                        {
+                        <div class="col-xs-2"><span class="label label-success">Active</span></div>
+                        }
+                        else
+                        { 
+                        <div class="col-xs-2"><span class="label label-danger">Inactive</span></div>
+                        }*@
+                        @Html.DisplayFor(modelItem => item.Status)
+                    </td>
+                </tr>
+            }
+            <tr><td style="background-color:#49607C" colspan="6"></td></tr>
+        </table>
+        <div>
+                  Page  @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+                    @Html.PagedListPager(Model, page => Url.Action("Index",new { page}))
+                </div>
+        <br />
+        <br />
+    </div>
+</div>

@@ -1,0 +1,68 @@
+﻿@model Transport.Models.Mine
+
+@{
+    ViewBag.Title = "Mine";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="main-1">
+    <div class="container">
+        @using (Html.BeginForm())
+        {
+            @Html.ValidationSummary(true)
+            <div class="form-horizontal">
+                <fieldset>
+                    <legend>Add/Edit Mine Detail</legend>
+                    <div class="row form-horizontal">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                @Html.LabelFor(model => model.Name, new { @class = "col-md-2 control-label" })
+                                <div class="col-md-6">
+                                    @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.Name)
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                @Html.LabelFor(model => model.Status, new { @class = "col-md-2 control-label" })
+                                <div class="col-md-6">
+                                    @Html.CheckBoxFor(model => model.Status)
+                                    @Html.ValidationMessageFor(model => model.Status)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="form-horizontal">
+                <div class="btn-group">
+                    <input onclick="return Validate();" type="submit" value="Save" class="btn btn-info"/>
+                </div>
+                <div class="btn-group">
+                    @{
+                        if (Model.Id > 0)
+                        {
+                        <a href="/mines/delete/@Model.Id" class="btn btn-success btn-small" onclick="return confirm('Are you sure to delete this Mines Name from Record');" >Delete</a>
+                        }
+                        @Html.ActionLink("Back", "index", null, new { @class = "btn btn-warning btn-small" })
+                            
+                    }
+                </div>
+                <br />
+                <br />
+                <br />
+                <br />
+            </div>
+        }
+
+    </div>
+</div>
+}
+
+
+@section Scripts {
+    @Styles.Render("~/Content/themes/base/css")   
+    @Scripts.Render("~/bundles/jqueryui")
+    @Scripts.Render("~/bundles/jqueryval")
+}

@@ -1,0 +1,229 @@
+﻿@model IEnumerable<Transport.Models.Transaction>
+@{    
+    ViewBag.Title = "Closing Balance Summary";
+}
+<link type="text/css" href="~/Content/report.css" rel="stylesheet" />
+<link type="text/css" href="~/Content/bootstrap.css" rel="stylesheet" />
+
+<div class="main-1">
+    <div class="container">
+        <table class="table-condensed" style="width:100%">
+           
+                @{
+                    if (ViewBag.RepType == "OpBal")
+                    {
+                            <tr>
+                                <th colspan='4' class="grpblock" style="font-size:20px"><b>Outstanding Statement</b></th>
+                            </tr>
+                    }
+                    else if (ViewBag.RepType == "Cash")
+                    {
+                            <tr>
+                                <th colspan='4' class="grpblock" style="font-size:20px"><b>Cash Summary</b></th>
+                            </tr>
+                    }
+                    else if (ViewBag.RepType == "Rebate")
+                    {
+                            <tr>
+                                <th colspan='4' class="grpblock" style="font-size:20px"><b>Rebate Summary</b></th>
+                            </tr>
+                    }
+                    else if (ViewBag.RepType == "Ledger")
+                    {
+                            <tr>
+                                <th colspan='4' class="grpblock" style="font-size:20px"><b>Ledger Summary</b></th>
+                            </tr>
+                    }
+                    }
+                <tr>
+                    @if (ViewBag.RepType == "OpBal")
+                    {
+                        <td colspan='4' class="grpblock" style="text-align:center;height:50px;background-color:White"><span style="padding:5px;font-size:16px">Summary As on Date - @ViewBag.From_Date </span></td>
+                    }
+                    else
+                    {
+                        <td colspan='4' class="grpblock" style="text-align:center;height:50px"><span style="padding:5px;">@ViewBag.From_Date -  @ViewBag.To_Date</span></td>
+                    }
+                </tr>
+
+                <tr>
+                    <th style="text-align:center">S No</th>
+                    <th style="text-align:center"><b>Receipent</b></th>
+                    @{
+                        if (ViewBag.RepType == "OpBal")
+                        {
+                            if (ViewBag.RateBy == "Bill Rate")
+                            {
+                                
+                                <th style="text-align:center">Total O/B (B)</th>
+                            }
+                            else if (ViewBag.RateBy == "Cash Rate")
+                            {
+                                <th style="text-align:center">Total O/B (C)</th>
+                            }
+                            else 
+                            {
+                                <th style="text-align:center">Total O/B (B)</th>
+                                <th style="text-align:center">Total O/B (C)</th>
+                            }
+                        }
+                        else if (ViewBag.RepType == "Cash")
+                        {
+                            <th style="text-align:center">Total Cash Amt (Rs)</th>
+                        }
+                        else if (ViewBag.RepType == "Rebate")
+                        {
+                            <th style="text-align:center">Total Rebate (Rs)</th>
+                        }
+                        else if (ViewBag.RepType == "Ledger")
+                        {
+                            <th style="text-align:center">Total Ledger Amt (Rs)</th>
+                        }
+                    }
+                </tr>
+
+                @{
+                    int I = 0;
+                    decimal obAmt = 0;
+                    decimal bAmt = 0;
+                    decimal cAmt = 0;
+
+                    //foreach (var gitem in Model.GroupBy(x => new { x.Cr_Account_Id}).Select(x => new { Supplier=x.Key.Cr_Account_Id.  }); 
+                    //Where(x => x.Key.Frmdate <= Convert.ToDateTime(ViewBag.From_Date)))
+
+                    foreach (var gitem in Model.GroupBy(x => new { x.Cr_Account_Id, Supplier = x.Company.Name }).Select(x => new { x.Key, OpBal = x.Sum(t => (t.DrCr == "Cr" ? -1 * t.Amount1 : t.Amount1)), OpBalCash = x.Sum(t => (t.DrCr == "Cr" ? -1 * t.Amount2 : t.Amount2)) }))
+                    {                        
+                        <tr>
+                            <td colspan='4' class="grpblock2">@gitem.Key.Supplier  </td>
+                        </tr>
+                        I = 1;
+                        if (ViewBag.RepType == "OpBal")
+                        {
+                            foreach (var ritem in Model.Where(x => x.Cr_Account_Id == gitem.Key.Cr_Account_Id).GroupBy(x => new { x.Dr_Account_Id, x.Company1.Name }).Select(x => new { Name = x.Key.Name, OpBal = x.Sum(t => (t.DrCr == "Cr" ? -1 * t.Amount1 : t.Amount1)), OpBalCash = x.Sum(t => (t.DrCr == "Cr" ? -1 * t.Amount2 : t.Amount2)), Count = x.Count() }).ToArray())
+                            {
+                                if (@ritem.OpBal !=0)
+                                {
+                            <tr>
+                                <td style="text-align:center;font-weight:600">@(I++)</td>
+                                <td style="text-align:left;font-weight:600">@ritem.Name </td>
+                                @if (ViewBag.RateBy == "All" )
+                                {
+                                <td style="text-align:right;font-weight:600">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", ritem.OpBal)</td>
+                                <td style="text-align:right;font-weight:600">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", ritem.OpBalCash)</td>
+                                }
+                                else if (ViewBag.RateBy == "Cash Rate")
+                                {
+                                <td style="text-align:right;font-weight:600">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", ritem.OpBalCash)</td>                                    
+                                }
+                                else
+                                {
+                                <td style="text-align:right;font-weight:600">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", ritem.OpBal)</td>                                    
+                                }
+                            </tr>
+                                }
+                            }
+                            <tr>
+                                <th colspan="2">TOTAL </th>
+                                 @if (ViewBag.RateBy == "All" )
+                                 {
+                                <th style="text-align:right;font-size:larger"><b>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", gitem.OpBal)</b></th>
+                                <th style="text-align:right;font-size:larger"><b>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", gitem.OpBalCash)</b></th>
+                                 }
+                                 else if (ViewBag.RateBy == "Cash Rate")
+                                 {
+                                <th style="text-align:right;font-size:larger"><b>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", gitem.OpBalCash)</b></th>
+                                 }
+                                 else
+                                 {
+                                <th style="text-align:right;font-size:larger"><b>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", @Model.Where(x => x.Cr_Account_Id == gitem.Key.Cr_Account_Id).Sum(x => (x.DrCr == "Cr" ? -1 * x.Amount1 : x.Amount1)))</b></th>
+                                 }
+                            </tr>
+                            <tr>
+                                 <th colspan="2">In Words :</th>
+                             @if (ViewBag.RateBy == "All" )
+                                 {
+                                    <td style="text-align:left"></td>
+                                 }
+                                  else if (ViewBag.RateBy == "Cash Rate")
+                                 {
+                                    <th style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", ((new Transport.Converter.IndiaCurrencyConverter()).ConvertToWord(gitem.OpBalCash.ToString("##"), null)))</th>
+                                 }
+                                 else
+                                 {
+                                    <th style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", ((new Transport.Converter.IndiaCurrencyConverter()).ConvertToWord(gitem.OpBal.ToString("##"), null)))</th>
+                                 }
+                             </tr>
+                        }
+                        else if (ViewBag.RepType == "Cash")
+                        {
+                            foreach (var ritem in Model.Where(x => x.Cr_Account_Id == gitem.Key.Cr_Account_Id && x.Particular == "Reciept").GroupBy(x => new { x.Dr_Account_Id, x.Company1.Name }).Select(x => new { Name = x.Key.Name, OpBal = x.Sum(t => t.Amount1), Count = x.Count() }).ToArray())
+                            {
+                            <tr>
+                                <td style="text-align:center;font-weight:600">@(I++)</td>
+                                <td style="text-align:left;font-weight:600">@ritem.Name</td>
+                                <td style="text-align:center;font-weight:600">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", ritem.OpBal)</td>
+                            </tr>
+                            }
+                            <tr>
+                                <th colspan="2">TOTAL </th>
+                                <td style="text-align:right;font-size:larger"><b>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", gitem.OpBalCash)</b></td>
+                            </tr>    
+                            <tr>
+                                <th colspan="2">In Words :</th>
+                                <th style="text-align:left">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", ((new Transport.Converter.IndiaCurrencyConverter()).ConvertToWord(gitem.OpBalCash.ToString("##"), null)))</th>
+                             </tr>    
+                                            
+                        }
+                        else if (ViewBag.RepType == "Rebate")
+                        {
+                            foreach (var ritem in Model.Where(x => x.Cr_Account_Id == gitem.Key.Cr_Account_Id && x.Particular == "Rebate").GroupBy(x => new { x.Dr_Account_Id, x.Company1.Name }).Select(x => new { Name = x.Key.Name, OpBal = x.Sum(t => t.Amount1), Count = x.Count() }).ToArray())
+                            {
+                            <tr>
+                                <td style="text-align:center;font-weight:600">@(I++)</td>
+                                <td style="text-align:left;font-weight:600">@ritem.Name</td>
+                                <td style="text-align:center;font-weight:600">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", ritem.OpBal)</td>
+                            </tr>
+                            <tr>
+                                <th colspan="2">TOTAL </th>
+                                <td style="text-align:right;font-size:larger"><b>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", gitem.OpBalCash)</b></td>
+                            </tr>
+                            <tr>
+                                <th colspan="2">In Words :</th>
+                                <th style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", ((new Transport.Converter.IndiaCurrencyConverter()).ConvertToWord(gitem.OpBalCash.ToString("##"), null)))</th>
+                            </tr>                            
+                            }
+                        }
+                        else if (ViewBag.RepType == "Ledger")
+                        {
+                            // foreach (var ritem in gitem.Where(x => x.Cr_Account_Id == gitem.Key.Cr_Account_Id && (x.Voucher_Date >= Convert.ToDateTime(ViewBag.From_Date)) && x.Voucher_Date <= Convert.ToDateTime(ViewBag.To_Date)).GroupBy(x => new { x.Dr_Account_Id, x.Company1.Name }).Select(x => new { Name = x.Key.Name, OpBal = x.Sum(t => (t.DrCr == "Cr" ? -1 * t.Amount1 : t.Amount1)), Count = x.Count() }).ToArray())
+
+                            foreach (var ritem in Model.Where(x => x.Cr_Account_Id == gitem.Key.Cr_Account_Id).GroupBy(x => new { x.Dr_Account_Id, x.Company1.Name }).Select(x => new { Id = x.Key.Dr_Account_Id, Name = x.Key.Name }).ToArray())
+                            {
+                                foreach (var opitem in Model.Where(y => y.Dr_Account_Id == ritem.Id && (y.Voucher_Date < Convert.ToDateTime(ViewBag.FromDate))).GroupBy(x => new { x.Dr_Account_Id }).Select(x => new { closBal = x.Sum(t => (t.DrCr == "Cr" ? -1 * t.Amount1 : t.Amount1)) }).ToArray())
+                                {
+                                    obAmt = @opitem.closBal;
+                                }
+                                foreach (var bitem in Model.Where(y => y.Dr_Account_Id == ritem.Id && (y.DrCr == "Dr") && (y.Voucher_Date >= Convert.ToDateTime(ViewBag.FromDate) && y.Voucher_Date <= Convert.ToDateTime(ViewBag.ToDate))).GroupBy(x => new { x.Dr_Account_Id, x.Company1.Name }).Select(x => new { Name = x.Key.Name, billBal = x.Sum(t => t.Amount1) }).ToArray())
+                                {
+                                    bAmt = @bitem.billBal;
+                                }
+                                foreach (var bitem in Model.Where(y => y.Dr_Account_Id == ritem.Id && (y.DrCr == "Cr") && (y.Voucher_Date >= Convert.ToDateTime(ViewBag.FromDate) && y.Voucher_Date <= Convert.ToDateTime(ViewBag.ToDate))).GroupBy(x => new { x.Dr_Account_Id, x.Company1.Name }).Select(x => new { Name = x.Key.Name, cashBal = x.Sum(t => t.Amount1) }).ToArray())
+                                {
+                                    cAmt = @bitem.cashBal;
+                                }                                                                                                
+                                    <tr>
+                                        <td style="text-align:center;font-weight:600">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", obAmt)</td>
+                                        <td style="text-align:left;font-weight:600">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", bAmt) </td>
+                                        <td style="text-align:center;font-weight:600">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", cAmt)</td>
+                                    </tr>
+                            }
+                        }
+                    }
+                    }
+                                <tr><td class="tblock" colspan="4">Print Date @DateTime.Now.Date.ToString("dd-MMM-yyyy")</td></tr>
+        </table>
+    </div>
+</div>
+
+
+

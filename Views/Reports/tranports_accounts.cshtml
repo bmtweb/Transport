@@ -1,0 +1,373 @@
+﻿@model Transport.Models.Account_Report
+@{
+    ViewBag.Title = "Tranport Accounts";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script type="text/javascript">
+
+    function check() {
+        var dropdown = document.getElementById("ReportType1");
+        var current_value = dropdown.options[dropdown.selectedIndex].value;
+        var selection = document.getElementById("toParty");
+        if (current_value == "302") {
+            document.getElementById("LastDate").style.display = "none";
+            document.getElementById("partyTo").style.display = "none";
+            document.getElementById("lbl22").innerHTML = "On Dated";
+            selection.selectedIndex = "0";
+        }
+        else {
+            document.getElementById("LastDate").style.display = "block";
+            document.getElementById("partyTo").style.display = "block";
+            document.getElementById("lbl22").innerHTML = "From Date";
+        }
+    }
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".Date").datepicker({
+            minDate: '@(Convert.ToDateTime(Request.Cookies["FY"].Value.Split('-')[0]).ToString("dd/MMM/yyyy"))',
+            dateFormat: 'dd/M/yy',
+            maxDate: '@(Convert.ToDateTime(Request.Cookies["FY"].Value.Split('-')[1]).ToString("dd/MMM/yyyy"))'
+        });
+
+        $(".Branch").change(function () {
+            location.href = "/Reports/tranports_accounts?Branch_Id=" + $(this).val();
+        });
+
+        HideShow();
+
+        $('.ReportType').change(function () {
+            HideShow();
+        });
+
+
+        function HideShow() {
+
+            if (parseInt($('.ReportType').val()) == 29) 
+            {
+                $('.grpBy').show();
+            } else 
+            {
+                $('.grpBy').hide();               
+            }
+
+            if (parseInt($('.ReportType').val()) == 22 || parseInt($('.ReportType').val()) == 27) {
+                $('.Turnover').show();
+            } else {
+                $('.Turnover').hide();
+            }
+
+            if (parseInt($('.ReportType').val()) == 27) {
+
+                $('.orderBy').show();
+                $('.paidBy').show();
+                $('.second').show();                
+            } else {
+                $('.orderBy').hide();
+                $('.paidBy').hide();
+                $('.second').hide();
+            }
+
+        }
+    });
+</script>
+<div class="main-1">
+    <div class="container">
+        <ul class="breadcrumb">
+            <li><a href="#">Reports >></a></li>
+            <li><a href="#">Tranport Accounts</a></li>
+        </ul>
+        <ul class="nav nav-tabs">
+            <li class="active"><a href="#home" data-toggle="tab" aria-expanded="false">Billing Reports(Transport)</a></li>
+            <li><a href="#profile" data-toggle="tab" aria-expanded="true">Account Reports(Transport)</a></li>
+        </ul>
+        <div id="myTabContent" class="tab-content">
+                <div class="tab-pane fade active in" id="home">
+                @using (Html.BeginForm("tranports_accounts", "Reports", FormMethod.Post, new { target = "_blank", Id = "frmAccounts" }))
+                {
+                <div class="row form-horizontal">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <div class="col-md-6">
+                                <div class="col-md-12">
+                                    @Html.LabelFor(m => m.Branch_Id, new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-12">
+                                    @Html.DropDownListFor(m => m.Branch_Id, ((SelectList)ViewBag.BranchName), "<----ALL---->", new { @class = "form-control Branch" })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>                  
+                <div class="row form-horizontal">
+                    <div class="form-group">
+                    <div class="col-xs-12">
+                        <div class="col-md-6">
+                            <div class="col-md-12">
+                                @Html.Label("Report Type", new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-12">
+                                <select id="ReportType" name="ReportType" class="form-control ReportType">
+                                    <option value="20">Transport Transaction Detail</option> @*Transport Freight Detail*@
+                                    <option value="21">Transport Freight Detail</option>@*Transport Freight Summary*@
+                                    <option value="22">Freight Turnover Detail</option>@*Freight Turnover Report*@
+                                    <option value="25">Freight Paidover Detail</option>@*Freight Paidover (Status Detail)*@
+                                    <option value="26">Loading Status Report</option>@*Loading Status Report*@
+                                    <option value="28">Freight Status Detail</option>@*Freight Paidover (Status Detail)*@
+                                    <option value="27">TP/TBB Report</option>@**@
+                                    <option value="29">Total Freight Summary</option>@**@
+                                    <option value="30">TDS Tax Summary</option>
+                                </select>
+                                @Html.ValidationMessageFor(m => m.ReportType)
+                            </div>
+                        @*<div class="col-md-6">
+                               <select id="loadType" name="loadType" class="form-control ReportType">
+                                    <option value="32">For All</option> 
+                                    <option value="33">For Bilty Only</option>
+                                </select>                        
+                        </div>
+                        *@
+                        </div>
+                        <div class="col-md-6 grpBy">
+                            <div class="col-md-12">
+                                @Html.Label("Group By", new { @class = "control-label grpBy" })
+                            </div>
+                            <div class="col-md-12">
+                                <select id="GroupBy" name="GroupBy" class="form-control Freight">
+                                    <option value="0">None</option>
+                                    <option value="1">Transport and Material</option>
+                                    <option value="2">Transport and Receipent </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-xs-12">
+                        <div class="col-md-6 Turnover">
+                            <div class="col-md-12">&nbsp;
+                                @Html.Label("Bill Type", new { @class = "control-label Turnover" })
+                            </div>
+                            <div class="col-md-12">
+                                <select id="TurnoverBy" name="TurnoverBy" class="form-control Turnover">
+                                    <option value="0">Both TP & TBB</option>
+                                    <option value="1">TBB Only</option>
+                                    <option value="2">TP Only</option>
+                                </select>
+                            </div>
+                        </div>
+                    <div class="col-md-6">
+                        <div class="col-md-12">
+                                @Html.Label("Secondary Transport", new { @class = "control-label second" })
+                        </div>
+                        <div class="col-md-12">
+                            @Html.DropDownListFor(m => m.Sec_Tranport_Id, ((SelectList)ViewBag.Secondary), "<----ALL---->", new { @class = "form-control second" })
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                </div>                      
+                <div class="row form-horizontal">
+                        <div class="form-group">
+                            <div class="col-xs-12">
+                                <div class="col-md-6">
+                                    <div class="col-md-12">
+                                        @Html.Label("From Transport", new { @class = "control-label" })
+                                    </div>
+                                    <div class="col-md-12">
+                                        @Html.DropDownListFor(m => m.Cr_Account_Id, ((SelectList)ViewBag.Companies), "<----ALL---->", new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.Cr_Account_Id)
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="col-md-12">
+                                        @Html.LabelFor(m => m.Dr_Account_Id, new { @class = "control-label" })
+                                    </div>
+                                    <div class="col-md-12">
+                                        @Html.DropDownListFor(m => m.Dr_Account_Id, ((SelectList)ViewBag.Receipant), "<----ALL---->", new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.Dr_Account_Id)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                  
+                <div class="row form-horizontal">
+                    <div class="form-group">
+                    <div class="col-xs-12">
+                        <div class="col-md-6">
+                            <div class="col-md-12">
+                                @Html.LabelFor(m => m.From_Date, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-12">
+                                @Html.TextBoxFor(m => m.From_Date, Model.From_Date.ToString("dd/MMM/yyyy"), new { @class = "form-control Date" })
+                                @Html.ValidationMessageFor(m => m.From_Date)
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="col-md-12">
+                                @Html.LabelFor(m => m.To_Date, new { @class = "control-label" })
+                            </div>
+                            <div class="col-md-12">
+                            @Html.TextBoxFor(m => m.To_Date, Model.To_Date.ToString("dd/MMM/yyyy"), new { @class = "form-control Date" })
+                            @Html.ValidationMessageFor(m => m.To_Date)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+
+                <div class="row form-horizontal">
+                    <div class="form-group">
+                    <div class="col-xs-12">
+                        <div class="col-md-6 paidBy">
+                                <div class="col-md-12">
+                                    @Html.Label("Payment Status", new { @class = "control-label paidBy" })
+                                </div>
+                                <div class="col-md-12">
+                                    <select id="paidBy" name="paidBy" class="form-control paidBy">
+                                        <option value="0">Paid Only</option>
+                                        <option value="1">Not Paid Only</option>
+                                    </select>
+                                </div>
+                            </div>
+                        <div class="col-md-6 orderBy">
+                                <div class="col-md-12">
+                                    @Html.Label("Order By", new { @class = "control-label orderBy" })
+                                </div>
+                                <div class="col-md-12">
+                                    <select id="OrderBy" name="OrderBy" class="form-control orderBy">
+                                        <option value="0">Bilty Date</option>
+                                        <option value="1">Paid Date</option>
+                                    </select>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+                </div>
+                    
+                <div class="form-horizontal">
+                <div class="btn-group">
+                    <input type="submit" value="View Report" class="btn btn-info"/>
+                </div>
+                <div class="btn-group">
+                    @{
+                                    @Html.ActionLink("Go to Main Page", "Index", "Invoices", null, new { @class = "btn btn-warning btn-small" })                            
+                    }
+                </div>
+                <br />
+                <br />
+                <br />
+                <br />
+            </div>                
+                }
+            </div>              
+                <div class="tab-pane fade" id="profile">
+                @using (Html.BeginForm("tranports_accounts", "Reports", FormMethod.Post, new { target = "_blank", Id = "frmAccounts" }))
+                {
+                    @*<div class="row form-horizontal">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <div class="col-md-6">
+                                    <div class="col-md-12">
+                                        @Html.LabelFor(m => m.Branch_Id, new { @class = "control-label" })
+                                    </div>
+                                    <div class="col-md-12" >
+                                        @Html.DropDownListFor(m => m.Branch_Id, ((SelectList)ViewBag.Branch), "<----ALL---->", new { @class = "form-control Branch" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>         *@         
+                    <div class="row form-horizontal">
+                        <div class="form-group">
+                    <div class="col-xs-12">
+                        <div class="col-md-6">
+                        <div class="col-md-12">
+                            @Html.Label("Report Type", new { @class = "control-label" })
+                        </div>
+                        <div class="col-md-12">
+                            <select id="ReportType1" name="ReportType" class="form-control" onchange="javascript:check()">
+                                <option value="101">Sales Detail</option>
+                                <option value="201">Receipt Detail </option>
+                                <option value="401">Rebate Statement </option>
+                                <option value="301">Account Statement</option>
+                                <option value="302">Outstanding Report</option>
+                            </select>
+                            @Html.ValidationMessageFor(m => m.ReportType)
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                    </div>
+                    <div class="row form-horizontal">
+                        <div class="form-group">
+                            <div class="col-xs-12">
+                                <div class="col-md-6">
+                                    <div class="col-md-12">
+                                        @Html.Label("From Transport", new { @class = "control-label" })
+                                    </div>
+                                    <div class="col-xs-12">
+                                        @Html.DropDownListFor(m => m.Cr_Account_Id, ((SelectList)ViewBag.Companies), new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(m => m.Cr_Account_Id)
+                                    </div>
+                                </div>
+                                <div class="col-md-6" id="partyTo">
+                                    <div class="col-xs-12" >
+                                        @Html.LabelFor(m => m.Dr_Account_Id, new { @class = "control-label" })
+                                    </div>
+                                    <div class="col-xs-12">
+                                        @Html.DropDownListFor(m => m.Dr_Account_Id, ((SelectList)ViewBag.Receipant), "<----ALL---->", new { @class = "form-control",id="toParty" })
+                                        @Html.ValidationMessageFor(m => m.Dr_Account_Id)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row form-horizontal">
+                        <div class="form-group">
+                            <div class="col-xs-12">
+                                <div class="col-md-6">
+                                    <div class="col-md-12">
+                                        @Html.LabelFor(m => m.From_Date, new { @class = "control-label",id="lbl22"  })
+                                    </div>
+                                    <div class="col-md-12">
+                                        @Html.TextBox("AFrom_Date", Model.From_Date.ToString("dd/MMM/yyyy"), new { @class = "form-control Date" })
+                                        @Html.ValidationMessageFor(m => m.From_Date)
+                                    </div>
+                                </div>
+                                <div class="col-md-6" id="LastDate">
+                                    <div class="col-md-12">
+                                        @Html.LabelFor(m => m.To_Date, new { @class = "control-label" })
+                                    </div>
+                                    <div class="col-md-12">
+                                        @Html.TextBox("ATo_Date", Model.To_Date.ToString("dd/MMM/yyyy"), new { @class = "form-control Date" })
+                                        @Html.ValidationMessageFor(m => m.To_Date)
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-horizontal">
+                        <div class="btn-group">
+                            <input type="submit" value="View Report" class="btn btn-info"/>
+                        </div>
+                    <div class="btn-group">
+                        @{
+                                    @Html.ActionLink("Go to Main Page", "Index", "Invoices", null, new { @class = "btn btn-warning btn-small" })                            
+                        }
+                    </div>
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

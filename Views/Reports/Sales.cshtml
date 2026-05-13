@@ -1,0 +1,83 @@
+﻿@model IEnumerable<Transport.Models.Transaction>
+
+@{
+    ViewBag.Title = "Sales Statement";
+    Layout = null;
+}
+
+<link type="text/css" href="~/Content/report.css" rel="stylesheet" />
+<link type="text/css" href="~/Content/bootstrap.css" rel="stylesheet" />
+<div class="main-1">
+    <div class="container">
+    <br />
+        <table class="table-condensed" style ="width:100%">
+                <tr>
+                    @if (ViewBag.RateBy == "Cash Rate")
+                    {
+                            <th colspan='6' class="tblock" style="font-size:14px;font-bold:true"><b>* Sales Statement *</b></th>
+                    }
+                    else
+                    {
+                            <th colspan='6' class="tblock" style="font-size:14px;font-bold:true"><b>Sales Statement </b></th>
+                    }           
+                </tr>
+                <tr>
+                    <td colspan='6' style="text-align:center;font-size:14px;font-weight:bold">@ViewBag.From_Party</td>
+                </tr>
+                <tr>
+                    <td colspan='6' style="text-align:center;height:40px"><span style="border:1px solid #ccc;padding:5px;margin:5px;border-radius:2px">@ViewBag.From_Date TO  @ViewBag.To_Date</span></td>
+                </tr>
+                @if (@ViewBag.To_Party != "ALL")
+                {
+                    <tr>
+                        <td colspan='6' style="text-align:center;font-weight:600">@ViewBag.To_Party </td>
+                    </tr>
+                }
+                <tr>
+                    <th style="text-align:center">S.NO</th>
+                    <th style="text-align:center">Date</th>
+                    <th style="text-align:center">Particular</th>
+                    <th style="text-align:center">Vch Type</th>
+                    <th style="text-align:center">Inv.No</th>
+                    <th style="text-align:center">Amount(Rs.)</th>
+                </tr>
+            @{
+                int I = 1;
+                //foreach (var item in Model.ToArray())
+                //foreach (var pitem in Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id).GroupBy(x => new { x.Company_Id, x.Company.Name }).Select(x => new { Name = x.Key.Name, Weight = x.Sum(y => y.Weight), Invoice_Amount = x.Sum(y => Math.Round(y.Invoice_Amount,0)), VAT_Amount = x.Sum(y => y.VAT_Amount), Total_Amount = x.Sum(y => Math.Round((y.VAT_Amount + y.Invoice_Amount),0)), Cash_Amount = x.Sum(y => Math.Round((y.Weight * y.C_Rate),0)) }).OrderBy(x => x.Name).ToArray())
+
+                foreach (var item in Model.ToArray())
+                {
+                <tr>
+                    <td>@(I++)</td>
+                    <td>@item.Voucher_Date.ToString("dd-MMM-yyyy")</td>
+                    @if (ViewBag.To_Party != "ALL")
+                    {
+                        <td>@item.Particular</td>
+                    }
+                    else
+                    {
+                        <td>@item.Company1.Name</td>
+                    }
+                    <td><i>Sales</i></td>
+                    <td>@item.Voucher_No</td>
+                    <td>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", item.Amount1)</td>
+                </tr>
+                }
+            }
+            <tr>
+                <th colspan='5' style="text-align:right">Total Inv Amt  </th>
+                <th>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}",Model.Sum(x => x.Amount1))</th>
+            </tr>
+            <tr>
+                <th colspan='5' style="text-align:right">Total Inv Amt(Words)  </th>
+                <th colspan='4' style="text-align:left">@((new Transport.Converter.IndiaCurrencyConverter()).ConvertToWord(Model.Sum(x => x.Amount1).ToString("##"), null))</th>
+
+            </tr>
+            <tr>
+                <td colspan='9' class="tblock" >Print Date @DateTime.Now.Date.ToString("dd-MMM-yyyy")</td>
+            </tr>
+        </table>
+        <br />
+    </div>
+</div>

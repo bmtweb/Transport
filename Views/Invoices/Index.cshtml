@@ -1,0 +1,255 @@
+﻿@model PagedList.IPagedList<Transport.Models.Invoice>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script type="text/javascript">
+    $(document).ready(function () 
+    {
+
+        if ($('#divmsg').html().trim().length > 1) {
+            $('#divmsg').dialog();
+        }
+
+        $("#ddlcomp").change(function () {
+            location.href = "/invoices/?comp=" + $(this).val();
+        });
+
+        $("#btnAdd").click(function () {
+            if ($("#ddlcomp").val().trim()=="") {
+                alert("Please select receipent company to create invoice!");
+                
+                return;
+            }
+            location.href = "/Invoices/Invoice?comp=" + $("#ddlcomp").val();
+        });
+
+        $("#btnFilter").click(function () {
+            location.href = "/invoices/?comp=" + $("#ddlcomp").val() + "&filter=" + $("#ddlFilter").val() + "&value=" + $("#txtFilter").val();
+        });
+
+
+        
+//            $("#tags").autocomplete({
+//                source: "/Invoices/TagSearch",
+//                minLength: 1,
+//                select: function (event, ui) {
+//                    if (ui.item) {
+//                        $("#tags").val(ui.item.value);
+//                        $("form").submit();
+//                    }
+//                }
+//            });
+//        
+
+        
+//// $("#PassId").autocomplete({
+////        source: function (request, response) {
+////            var customer = new Array();
+////            $.ajax({
+////                async: false,
+////                cache: false,
+////                type: "POST",
+////                url: "(Url.Action("Autocomplete", "invoices"))",
+////                data: { "term": request.term },
+////                success: function (data) {
+////                    for (var i = 0; i < data.length ; i++) {
+////                        customer[i] = { label: data[i].Value, Id: data[i].Key };
+////                    }
+////                }
+////            });
+////            response(customer);
+////        },
+////         select: function (event, ui) {
+////             //fill selected customer details on form
+////             $.ajax({
+////                 cache: false,
+////                 async: false,
+////                 type: "POST",
+////                 url: "(Url.Action("GetDetail", " Home"))",
+////                data: { "id": ui.item.Id },
+
+////                success: function (data) {
+////                    $('#VisitorDetail').show();
+////                    $("#Name").html(data.VisitorName)
+////                    $("#PatientName").html(data.PatientName)
+////                    //alert(data.ArrivingTime.Hours)
+////                    $("#VisitorId").val(data.VisitorId)
+////                    $("#Date").html(data.Date)
+////                    $("#ArrivingTime").html(data.ArrivingTime)
+////                    $("#OverTime").html(data.OverTime)
+
+////                    action = data.Action;
+////                },
+////                error: function (xhr, ajaxOptions, thrownError) {
+////                    alert('Failed to retrieve states.');
+////                }
+////            });
+////        }
+////     });
+
+//        $("#VehNo").autocomplete({
+//            source: function (request, response) {
+//                $.ajax({
+//                    url: "/invoices/AutoCompleteVeh",
+//                    type: "POST",
+//                    dataType: "json",
+//                    data: { term: request.term },
+//                    success: function (data) 
+//                    {
+//                        response($.map(data, function (item) {
+//                            return { label: item.Name, value: item.Name };
+//                        }))
+//                    }
+//                })
+//            },
+//            messages: {
+//                noResults: "", results: ""
+//            }
+//        });
+
+    })
+</script>
+
+<div class="main-1">
+    <div class="container">
+        <div class="warning" id="divmsg" title="Message">
+            @TempData["message"]
+        </div>
+        <ul class="breadcrumb">
+            <li><a href="#">List of All Invoices </a></li>
+        </ul>
+        @using (Html.BeginForm())
+        {
+            <div class="btn-group" style="float:left">
+                <label class="btn btn-info" style="background-color:ActiveCaption;color:White">Select Company</label>
+                @Html.DropDownList("ddlcomp", ((SelectList)ViewBag.Companies),"ALL", new { @class = "btn" }) 
+                <input type="button" id="btnAdd" value="Create New Invoice" class="btn btn-info btn-small" style="margin-left:5px"/>
+            </div> 
+            <div class="btn-group" style="float:right">
+                &nbsp;
+                <label class="btn btn-info" style="background-color:ActiveCaption;color:White">Filter List By</label>
+                <select id="ddlFilter" class="btn">
+                    <option value="Billty_No">LR No</option>
+                    <option value="Invoice_No">Invoice No</option>
+                    <option value="Invoice_Date">Invoice Date</option>
+                    <option value="Truck_No">Truck No</option>
+                    <option value="Transport">Transport</option>
+                </select>
+                <input type="text" id="txtFilter" class="btn" style="border:solid;border-width:1px;text-align:left;width:100px"  />
+                <input type="button" class="btn btn-info " id ="btnFilter" value="Show in List" />
+            </div>
+
+            <div class="row form-horizontal">
+                <div class="form-group">
+                    <table class="table table-responsive">
+                        <tr>
+                            <th class="tblock" style="font-size:10px;background-image:url('../../Content/images/tb-one.png');background-repeat:repeat-x;font-size:12px;padding:5px">
+                                <div class="col-md-12">
+                                    <div class="col-xs-3">
+                                        <div class="col-xs-4">@*<img src="@Url.Content("~/Content/images/print.png")"  alt="PRINT"/>*@</div>
+                                        <div class="col-xs-3">LR No</div>
+                                        <div class="col-xs-3">Inv No</div>
+                                        <div class="col-xs-2">Date</div>
+                                    </div>
+                                    <div class="col-xs-2">
+                                        <div class="col-xs-12" style="left:100px">Company</div> 
+                                    </div>
+                                    <div class="col-xs-2">
+                                        <div class="col-xs-12" style="left:100px">Transport</div>
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <div class="col-xs-3" style="left:100px">Material</div>
+                                        <div class="col-xs-3" style="left:140px">Weight</div>
+                                        <div class="col-xs-4" style="left:160px">Truck No</div>
+                                    </div>
+                                     <div class="col-xs-1" style="left:100px">
+                                        (Action)
+                                    </div>
+                                </div>
+                            </th>
+                        </tr>
+
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="col-md-12">
+                                        <div class="col-md-4">
+                                            <div class="col-xs-3">
+                                                <a href="#" id='@("m" + item.Id)' class="dropdown-toggle btn btn-default btn-sm" data-toggle="dropdown" role="button" aria-expanded="false" title="Select a Format to Print"> Print <span class="caret"></span></a>
+                                                <ul class="dropdown-menu" role="menu">
+                                                    <li>@Html.ActionLink("Print Invoice", "Print", new { id = item.Id ,sign = false } , new { @target = "_blank" })</li>
+                                                    <li>@Html.ActionLink("Print Invoice With Sign", "Print", new { id = item.Id, sign = true }, new { @target = "_blank" })</li>
+                                                    @if (item.BillType == "To Pay")
+                                                    {
+                                                        <li>@Html.ActionLink("Print Bilty", "Bilty", new { id = item.Id }, new { @target = "_blank" })</li>
+                                                    }
+                                                    else
+                                                    { 
+                                                        <li>@Html.ActionLink("Print Bilty", "paidbilty", new { id = item.Id, sign = false }, new { @target = "_blank" })</li>
+                                                        <li>@Html.ActionLink("Print Bilty With Sign", "paidbilty", new { id = item.Id, sign = true }, new { @target = "_blank" })</li>
+                                                    }
+
+
+
+@*                                                    <li>@Html.ActionLink("Print Form(403)", "ExportForm", new { id = item.Id }, new { @target = "_blank" })</li>
+*@                                                
+
+@*                                              <li>@Html.ActionLink("Print Form(404)", "Form", new { id = item.Id }, new { @target = "_blank" })</li>
+*@                                                
+                                                </ul>
+                                            </div>
+                                            <div class="col-xs-2"><span class="badge" style="background-color:Maroon">@item.Billty_No</span></div>
+                                            <div class="col-xs-2"><span class="badge" style="background-color:Green">@item.Invoice_No</span></div>
+                                            <div class="col-xs-4">@item.Invoice_Date.ToString("dd-MMM-yyyy")</div>
+                                        </div>
+                                        <div class="col-xs-2">
+                                            @item.Company.Name
+                                        </div>
+                                        <div class="col-xs-2">
+                                            @item.Company1.Name   
+                                        </div>
+                                        <div class="col-xs-4">
+                                            <div class="col-xs-4">@item.Product.Name</div>
+                                            <div class="col-xs-3">@item.Weight</div>
+                                            <div class="col-xs-4" style="font-weight:bold">@item.Truck_No</div>
+                                       
+                                            <div class="col-xs-1" >
+                                            @if (Request.IsAuthenticated)
+                                            {
+                                                if (@ViewBag.RId == "1")
+                                                {
+                                                    <a href="@Url.Action("Invoice", "Invoices", new { id = item.Id })" title="Click to Edit">
+                                                        <img style="border:2px solid #cccccc;border-color:Red;padding:4px" src="@Url.Content("~/Content/images/edit.png")"  alt="EDIT"/>
+                                                    </a>
+                                                }
+                                            }
+                                            </div>
+                                        </div>
+                                </div>
+                                </td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+            </div>
+                <div style="float:right;margin-left:40px;width:100%">
+                 @Html.PagedListPager(Model, page => Url.Action("Index", new { page, comp = ViewBag.company_id }))
+                </div>
+                <div style="float:right;text-align:right;width: 100%">
+                Page  @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+                </div>
+        }
+        <br />
+        <br />
+    </div>
+</div>
+
+@section Scripts 
+{
+    @Styles.Render("~/Content/themes/base/css")
+    @Scripts.Render("~/bundles/jquery")
+    
+}

@@ -1,0 +1,273 @@
+﻿@model Transport.Models.Company
+
+@{
+    ViewBag.Title = "Company";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script type="text/javascript">
+    function Validate() {
+        if ($("input[type='checkbox'][class='chk']:checked").length == 0) {
+            alert('At least one branch should be seleced!');
+            return false;
+        }
+        else { return true; }
+    }
+
+    $(document).ready(function () {
+        HideShow();
+        $('#Type').change(function () {
+            HideShow();
+        });
+
+        function HideShow() {
+            if ($('#Type').val() == "2") {
+                $('.Phone').hide();
+                $('.BillType').show();
+            } else {
+                $('.BillType').hide();
+                $('.Phone').show();
+            }
+        }
+
+    });
+</script>
+
+<div class="main-1">
+    <div class="container">
+        @using (Html.BeginForm())
+        {
+            @Html.ValidationSummary(true)
+            <div class="form-horizontal">
+                <fieldset>
+                    <legend>Company Details</legend>
+                    <div class="row form-horizontal">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <div class="col-md-6">
+                                    @Html.LabelFor(model => model.Name, new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-6">
+                                    @Html.LabelFor(model => model.Unit_Name, new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.Name)
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.TextBoxFor(model => model.Unit_Name, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.Unit_Name)
+                                </div>
+                            </div>
+
+                            <div class="col-xs-12">
+                                <div class="col-xs-6">
+                                    @Html.LabelFor(model => model.Type, new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.LabelFor(model => model.Status, new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.DropDownListFor(model => model.Type, ((SelectList)ViewBag.ComType), new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.Type)
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.CheckBoxFor(model => model.Status)
+                                    @Html.ValidationMessageFor(model => model.Status)
+                                </div>
+                            </div>
+
+                            <div class="col-xs-12">
+                                <div class="col-xs-6">
+                                    @Html.LabelFor(model => model.Address, new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.LabelFor(model => model.City, new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.TextBoxFor(model => model.Address, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.Address)
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.TextBoxFor(model => model.City, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.City)
+                                </div>
+                            </div>
+                            <div class="col-xs-12">
+                                <div class="col-xs-6">
+                                    @Html.LabelFor(model => model.Dist, new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.LabelFor(model => model.State, new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.TextBoxFor(model => model.Dist, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.Dist)
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.TextBoxFor(model => model.State, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.State)
+                                </div>
+                            </div>
+                            <div class="col-xs-12">
+                                <div class="col-xs-6">
+                                    @Html.LabelFor(model => model.Zip, new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.LabelFor(model => model.Phone_1, new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.TextBoxFor(model => model.Zip, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.Zip)
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.TextBoxFor(model => model.Phone_1, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.Phone_1)
+                                </div>
+                            </div>
+                            <div class="col-xs-12 Phone">
+                                <div class="col-xs-6">
+                                    @Html.Label("CIN NO", new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.LabelFor(model => model.Mobile, new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.TextBoxFor(model => model.Fax, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.Fax)
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.TextBoxFor(model => model.Mobile, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.Mobile)
+                                </div>
+                           </div>
+
+                            <div class="col-xs-12 Phone">
+                                <div class="col-md-6">
+                                    @Html.LabelFor(model => model.Email, new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.LabelFor(model => model.Pan_No, new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.TextBoxFor(model => model.Email, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.Email)
+                                </div>
+                                <div class="col-md-6">
+                                    @Html.TextBoxFor(model => model.Pan_No, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.Pan_No)
+                                </div>
+                            </div>
+
+                            <div class="col-xs-12">
+                                <div class="col-xs-6">
+                                    @Html.LabelFor(model => model.TIN, new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.LabelFor(model => model.CST_NO, new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.TextBoxFor(model => model.TIN, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.TIN)
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.TextBoxFor(model => model.CST_NO, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.CST_NO)
+                                </div>
+                            </div>
+
+@*                            <div class="col-xs-12">
+                                <div class="col-xs-6">
+                                    @Html.LabelFor(model => model.GST_NO, new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.TextBoxFor(model => model.GST_NO, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.GST_NO)
+                                </div>
+                            </div>
+*@
+                            <div class="col-xs-12 BillType">
+                                <div class="col-xs-12">
+                                    @Html.LabelFor(model => model.BillType, new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.DropDownListFor(model => model.BillType, ((SelectList)ViewBag.BType), new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.BillType)
+                                </div>
+                            </div>
+                            <div class="col-xs-12 Phone">
+                                <div class="col-xs-6 Phone">
+                                    @Html.LabelFor(model => model.Bank, new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-6 ">
+                                    @Html.LabelFor(model => model.Account_No, new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-6 Phone">
+                                    @Html.TextBoxFor(model => model.Bank, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.Bank)
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.TextBoxFor(model => model.Account_No, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.Account_No)
+                                </div>
+                            </div>
+
+                            <div class="col-xs-12 ">
+                                <div class="col-xs-12">
+                                    @Html.LabelFor(model => model.RTGS, new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.TextBoxFor(model => model.RTGS, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.RTGS)
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </fieldset>
+                <fieldset>
+                    <legend>Select Branches </legend>
+                    <table class="table-condensed" >
+                        <tr>
+                        @foreach (var item in (List<Transport.Models.Branch>)ViewBag.Branches)
+                        {
+                                <td style="width: 25px; margin-left: 50px;padding:5px">
+                                    <input class="chk" type="checkbox" id= "chk_@item.Id" name= "chk_@item.Id" @(Model.Company_Branches.Where(x => x.Branch_Id == item.Id).Count() > 0 ? "checked" : "unchecked") }/>
+                                </td>
+                                <td>@item.Name</td>
+                        }
+                            </tr>
+
+                    </table>
+                    <br /><br />
+                </fieldset>
+            </div>
+            <div class="form-horizontal">
+                <div class="btn-group">
+                    <input onclick="return Validate();" type="submit" value="@(Model.Id == 0 ? "Save" : "Update")" class="btn btn-info"/>
+                </div>
+                <div class="btn-group">
+                    @{
+                        if (Model.Id > 0)
+                        {
+                        <a href="/companies/Delete/@Model.Id" class="btn btn-success btn-small" onclick="return confirm('Are you sure to delete this record');" >Delete</a>
+                        }
+                        @Html.ActionLink("Back", "index",null, new { @class = "btn btn-warning btn-small" })
+                            
+                    }
+
+                </div>
+                <br />
+                <br />
+                <br />
+                <br />
+            </div>
+        }
+
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

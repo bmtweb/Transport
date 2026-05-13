@@ -1,0 +1,104 @@
+﻿@model PagedList.IPagedList<Transport.Models.Company>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        
+        if ($('#divmsg').html().trim().length > 1) {
+            $('#divmsg').dialog();
+        }
+    })
+</script>
+<div class="warning" id="divmsg" title="Message">
+        @TempData["message"]
+</div>
+<div class="main-1">
+    <div class="container">
+        <ul class="breadcrumb">
+            <li><a href="#">Master</a></li>
+            <li><a href="#">Transporter</a></li>
+        </ul>
+        @using (Html.BeginForm())
+        { 
+        <div class="btn-group">
+            @Html.ActionLink("Add New Transport", "transporter", new { id = 0 }, new { @class = "btn btn-info btn-small" })
+        </div>
+        <div class="btn-group" style="float:right">
+            <label class="btn btn-info" style="background-color:ActiveCaption;color:White">Select Transport Type</label>
+            @Html.DropDownList("ddlType", ((SelectList)ViewBag.ComType), new { @class = "btn" })
+            <input type="submit" value="Show" class="btn btn-info btn-small"/>
+        </div>        
+        <div class="row form-horizontal">
+            <div class="form-group">
+                <table class="table table-condensed" style="width:95%;margin-top:10px;">
+                    <tr>
+                        <th class="tblock"> S No.</th>
+                        <th class="tblock">
+                            <div class="col-xs-12">
+                                <div class="col-md-4">
+                                    <div class="col-md-6" >Name</div>
+                                    <div class="col-md-6">Unit Name</div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="col-md-12">Address</div>
+
+                                </div>
+                                <div class="col-md-5">
+                                    <div class="col-xs-4">City</div>
+                                    <div class="col-xs-3">State</div>
+                                    <div class="col-xs-3">Zip</div>
+                                    <div class="col-xs-1"></div>
+                                </div>
+                            </div>
+                        </th>
+                    </tr>
+
+                    @{
+                        int I = 1;
+                        foreach (var item in Model)
+                        { 
+                                    <tr>
+                                        <td style="text-align:center" >
+                                            @(I++)
+                                        </td>
+                                        <td>
+                                            <div class="col-xs-12">
+                                                <div class="col-md-4">
+                                                    <div class="col-md-6" style="width:300px;">@item.Name</div>
+                                                    <div class="col-md-6">@item.Unit_Name</div>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="col-md-12">@item.Address</div>
+
+                                                </div>
+                                                <div class="col-md-5">
+                                                    <div class="col-xs-4" style="text-align:center">@item.City</div>
+                                                    <div class="col-xs-3" style="text-align:center">@item.State</div>
+                                                    <div class="col-xs-3" style="text-align:center">@item.Zip</div>
+                                                    <div class="col-xs-1">
+                                                     <a href="@Url.Action("Transporter", "Transporters", new { id = item.Id })" title="Click to Edit Transport Deatil ">
+                                                    <img src="@Url.Content("~/Content/images/edit.png")"  alt="EDIT"/>
+@*                                                    @Html.ActionLink("Edit", "transporter", new { id = item.Id })
+*@                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                        }
+                    }
+                    <tr><td style="background-color:#49607C" colspan="6"></td></tr>
+                </table>
+            </div>
+        </div>
+            <div>
+                  Page  @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+                    @Html.PagedListPager(Model, page => Url.Action("Index",new { page}))
+                </div>
+        }
+        <br />
+        <br />
+    </div>
+</div>

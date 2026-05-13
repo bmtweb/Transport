@@ -1,0 +1,136 @@
+﻿@model Transport.Models.Invoice_Rates
+
+@{
+    ViewBag.Title = "Rate";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm()) {
+    @Html.ValidationSummary(true)
+
+    <div class="main-1">
+    <div class="container">
+        <ul class="breadcrumb">
+                <li><a href="#">Master</a></li>
+                <li><a href="#">Invoice Rates</a></li>
+            <li><a href="#">Add/Edit</a></li>
+            </ul>
+        @using (Html.BeginForm())
+        {
+            @Html.ValidationSummary(true)
+            <div class="form-horizontal">
+                <fieldset>
+                    <legend>Rate Details</legend>
+                    <div class="row form-horizontal">
+                        <div class="form-group">
+                            <div class="col-xs-12">
+                                <div class="col-xs-6">
+                                    @Html.LabelFor(model => model.Company_Id, new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.LabelFor(model => model.Supplier_Id, new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.DropDownListFor(model => model.Company_Id,(SelectList)ViewBag.Companies, "--select one--", new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.Company_Id)
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.DropDownListFor(model => model.Supplier_Id,(SelectList)ViewBag.Suppliers, "--select one--", new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.Supplier_Id)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row form-horizontal">
+                        <div class="form-group">
+                            <div class="col-xs-12">
+                                <div class="col-xs-6">
+                                    @Html.LabelFor(model => model.Product_Id, new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.LabelFor(model => model.Transport_Id, new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.DropDownListFor(model => model.Product_Id,(SelectList)ViewBag.Products, "--select one--",new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.Product_Id)
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.DropDownListFor(model => model.Transport_Id,(SelectList)ViewBag.Tranporters, "--select one--", new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.Transport_Id)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="row form-horizontal">
+                        <div class="form-group">
+                            <div class="col-xs-12">
+                                <div class="col-xs-6">
+                                    @Html.LabelFor(model => model.B_Rate, new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.LabelFor(model => model.C_Rate, new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.TextBoxFor(model => model.B_Rate, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.B_Rate)
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.TextBoxFor(model => model.C_Rate, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.C_Rate)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row form-horizontal">
+                        <div class="form-group">
+                            <div class="col-xs-12">
+                                <div class="col-xs-6">
+                                    @Html.LabelFor(model => model.Branch_Id , new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.LabelFor(model => model.Active, new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.DropDownListFor(m => m.Branch_Id  , (SelectList)ViewBag.Branches, new { @class = "form-control combo" })
+                                    @Html.ValidationMessageFor(m => m.Branch_Id )
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.CheckBoxFor(model => model.Active)
+                                    @Html.ValidationMessageFor(model => model.Active)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+
+            </div>
+            <div class="form-horizontal">
+                <div class="btn-group">
+                    <input type="submit" value="@(Model.Id == 0 ? "Save" : "Update")" class="btn btn-info"/>
+                </div>
+                <div class="btn-group">
+                    @{
+                        if (Model.Id > 0)
+                        {
+                        <a href="/rates/delete/@Model.Id" class="btn btn-success btn-small" onclick="return confirm('Are you sure to delete this record');" >Delete</a>
+                        }
+                        @Html.ActionLink("Back", "index",null, new { @class = "btn btn-warning btn-small" })
+                            
+                    }
+
+                </div>
+                <br />
+                <br />
+                <br />
+                <br />
+            </div>
+        }
+
+    </div>
+</div>
+}
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

@@ -1,0 +1,291 @@
+﻿@model Transport.Models.Invoice
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Invoice Print</title>
+
+    <script type="text/javascript"> 
+<!--        hide
+        function killerrors() {
+            return true;
+        }
+        window.onerror = killerrors;
+    // --> 
+    </script>
+     <style type="text/css">
+         
+        .ft0 {
+            font-style: normal;
+            font-weight: bold;
+            font-size: 11px;
+            font-family: Verdana;
+            color: #000000;
+        }
+
+        .ft1 {
+            font-style: normal;
+            font-weight: bold;
+            font-size: 13px;
+            font-family: Verdana;
+            color: #000000;
+        }
+
+        .ft2 {
+            font-style: normal;
+            font-weight: bold;
+            font-size: 16px;
+            font-family: Times New Roman;
+            color:Black;
+        }
+
+        .ft3 {
+            font-style: normal;
+            font-weight: bold;
+            font-size: 12px;
+            font-family: Verdana;
+            color: Black;
+        }
+
+        .ft4 {
+            font-style: normal;
+            font-weight: normal;
+            font-size: 13px;
+            font-family: Times New Roman;
+            color: #000000;
+        }
+
+        .ft5 {
+            font-style: normal;
+            font-weight: normal;
+            font-size: 11px;
+            font-family: Verdana;
+            color: #000000;
+        }
+
+        .ft6 {
+            font-style: normal;
+            font-weight: normal;
+            font-size: 12px;
+            font-family: Verdana;
+            color: #000000;
+        }
+
+        .ft7 {
+            font-style: normal;
+            font-weight: normal;
+            font-size: 15px;
+            font-family: Times New Roman;
+            color: #000000;
+        }
+
+        .ft8 {
+            font-style: normal;
+            font-weight: bold;
+            font-size: 15px;
+            font-family: Calibri;
+            color: Black;
+        }
+
+        .ft9 {
+            font-style: normal;
+            font-weight: bold;
+            font-size: 19px;
+            font-family: Times New Roman;
+            color: #000000;
+        }
+
+        .ft10 {
+            font-style: normal;
+            font-weight: bold;
+            font-size: 22px;
+            font-family: Arial;
+            color: #000000;
+        }
+
+        .ft11 {
+            font-style: normal;
+            font-weight: normal;
+            font-size: 13px;
+            font-family: Verdana;
+            color: #000000;
+        }
+
+        .ft12 {
+            font-style: normal;
+            font-weight: normal;
+            font-size: 22px;
+            font-family: Arial Black;
+            color: #000000;
+        }
+
+        .ft13 {
+            font-style: normal;
+            font-weight: bold;
+            font-size: 11px;
+            font-family: Verdana;
+            color: #0000ff;
+        }
+
+        .ft14 {
+            font-style: normal;
+            font-weight: bold;
+            font-size: 11px;
+            font-family: Verdana;
+            color: #ffffff;
+        }
+
+        .ft15 {
+            font-style: normal;
+            font-weight: bold;
+            font-size: 16px;
+            font-family: Arial;
+            color: #000000;
+        }
+
+        .ft16 {
+            font-style: normal;
+            font-weight: bold;
+            font-size: 12px;
+            font-family: Verdana;
+            color: #7f007f;
+        }
+    </style>
+    <script type="text/javascript">
+        var currentpos, timer;
+        function initialize() {
+            timer = setInterval("scrollwindow()", 10);
+        }
+        function sc() {
+            clearInterval(timer);
+        }
+        function scrollwindow() {
+            currentpos = document.body.scrollTop;
+            window.scroll(0, ++currentpos);
+            if (currentpos != document.body.scrollTop)
+                sc();
+        }
+        document.onmousedown = sc
+        document.ondblclick = initialize
+    </script>
+
+</head>
+<body vlink="#FFFFFF" link="#FFFFFF" bgcolor="#ffffff">
+   
+    <div style="position: absolute; top: 5px; left: 0;">
+    @{
+        if (ViewBag.ShowSign == "Y") 
+        {
+            <img width="850" height="1100" style="z-index:0" src="../../Content/images/pg_inv_newS.jpg" alt="invoice_bg"/>
+        }
+        else
+        {
+            <img width="850" height="1100" style="z-index:0" src="../../Content/images/pg_inv_newW.jpg" alt="invoice_bg"/>        
+        }
+    }
+    </div>
+
+	<!-- Supplier Detail //-->
+	 <div style="position: absolute; top: 38px;text-align:center;width:850px"><span class="ft12"> @Model.Company2.Name</span></div>
+    <div style="position: absolute; top: 60px;text-align:center;width:850px">( <span class="ft1"> @Model.Company2.Unit_Name</span>)</div>    
+    <div style="position: absolute; top: 76px;text-align:center;width:850px">
+		<span class="ft5" style="font-size:15px">@Model.Company2.Address, <br /> Distt- @Model.Company2.Dist ( @Model.Company2.State ) Pin No: @Model.Company2.Zip</span>
+	</div>
+
+    <div style="position: absolute; top: 76px;text-align:center;width:850px"></div>
+    <div style="position: absolute; top: 114px;text-align:center;width:850px"><span class="ft5"><strong>TEL NO :- </strong>@Model.Company2.Phone_1.ToString()</span></div>
+   
+    <div style="position: absolute; top: 122px; left: 110px"><span class="ft1">@Model.Company2.TIN </span></div>
+    <div style="position: absolute; top: 120px; left: 685px"><span class="ft1">@Model.Company2.Pan_No </span></div>
+
+    <div style="position: absolute; top: 174px; left: 145px"><span class="ft1">@Model.Invoice_No</span></div>
+    <div style="position: absolute; top: 190px; left: 150px"><span class="ft1">@Model.Invoice_Date.ToString("dd/MM/yy")</span></div>
+    <div style="position: absolute; top: 193px; left: 501px"><span class="ft1">@Model.Form_No</span></div>
+    
+    <div style="position: absolute; top: 225px; left: 128px"><span class="ft1">@Model.Company.Name</span></div>
+    <div style="position: absolute; top: 226px; left: 498px"><span class="ft11">@Model.Company.TIN </span></div>
+    <div style="position: absolute; top: 245px; left: 123px;width:320px"><span class="ft11">@Model.Company.Address ,@Model.Company.City  </span></div>
+    <div style="position: absolute; top: 243px; left: 498px"><span class="ft11">@Model.Company.State </span></div>
+    <div style="position: absolute; top: 243px; left:718px;">
+        @{ 
+            if (Model.Company.State.ToUpper() == "RAJASTHAN")
+            {
+                <span class="ft11"><strong>08</strong></span>
+            }
+            else
+            {
+                <span class="ft11"><strong>24</strong></span>                                                                 
+            }
+        }                                                                          
+    </div>
+    <div style="position: absolute; top: 296px; left: 218px"><span class="ft11">Truck/ Trailor</span></div>
+    <div style="position: absolute; top: 313px; left: 218px"><span class="ft11">@Model.Truck_No</span></div>
+    <div style="position: absolute; top: 330px; left: 218px"><span class="ft11">@Model.Invoice_Date.ToString("dd-MMM-yyyy")</span></div>
+    <div style="position: absolute; top: 350px; left: 218px"><span class="ft11">@Model.To_City</span></div>
+
+    <div style="position: absolute; top: 296px; left: 498px"><span class="ft11">@Model.Company1.Name</span></div>
+    <div style="position: absolute; top: 315px; left: 510px"><span class="ft11">@Model.Company1.Address</span></div>
+    <div style="position: absolute; top: 350px; left: 498px"><span class="ft11">@Model.Company1.TIN</span></div>
+    <div style="position: absolute; top: 368px; left: 498px"><span class="ft11">@Model.Company1.State</span></div>
+
+    <div style="position: absolute; top: 427px; left: 94px ;height:300px;width:150px"><span class="ft11" >@Model.Product.Name </span></div>
+    <div style="position: absolute; top: 425px; left: 324px"><span class="ft11">@Model.Product.HSNCode </span></div>
+
+    <div style="position: absolute; top: 427px; left: 455px"><span class="ft11">@Model.Weight</span></div>
+
+    <div style="position: absolute; top: 427px; left: 559px"><span class="ft11">@Model.B_Rate</span></div>
+    
+    <div style="position: absolute; top: 427px; left: 600px; text-align:right;width:123px;"><span class="ft11">@Model.Invoice_Amount</span></div>
+
+
+
+     <div style="position: absolute; top: 563px; left: 600px; text-align:right; width:123px;"><span class="ft6">@Model.Invoice_Amount</span></div>
+
+    <div style="position: absolute; top: 593px; left: 540px; width:123px;"><span class="ft5" style="font-size:12px;font-weight:bold" >@(Model.Company.State == "RAJASTHAN" ? "2.5 %" : "0 %")</span></div>
+    <div style="position: absolute; top: 593px; left: 600px;text-align:right; width:123px;"><span class="ft5">@(Model.Company.State == "RAJASTHAN" ? Convert.ToString(Math.Round(Convert.ToDouble(Model.Invoice_Amount * Convert.ToDecimal("0.025")), 2)) : "0")</span></div>
+
+    <div style="position: absolute; top: 623px; left: 540px; width:123px;"><span class="ft5" style="font-size:12px;font-weight:bold">@(Model.Company.State == "RAJASTHAN" ? "2.5 %" : "0 %")</span></div>
+    <div style="position: absolute; top: 623px; left: 600px; text-align:right;width:123px;"><span class="ft5">@(Model.Company.State == "RAJASTHAN" ? Convert.ToString(Math.Round(Convert.ToDouble(Model.Invoice_Amount * Convert.ToDecimal("0.025")), 2)) : "0")</span></div>
+
+
+    <div style="position: absolute; top: 658px; left: 540px; width:123px;"><span class="ft5" style="font-size:12px;font-weight:bold">@(Model.Company.State == "RAJASTHAN" ? "0 %" : Math.Round(Convert.ToDecimal(Model.VAT_Rate), 0).ToString()) %</span></div>
+    <div style="position: absolute; top: 662px; left: 600px; text-align:right;width:123px;"><span class="ft5">@(Model.Company.State == "RAJASTHAN" ? "0" : Convert.ToString(Math.Round(Convert.ToDouble(Model.Invoice_Amount * (Model.VAT_Rate / 100)), 0)))</span></div>
+
+
+
+ 
+    <div style="position: absolute; top: 693px; left: 685px;text-align:right"><span class="ft0">@(Model.Invoice_Amount + Model.VAT_Amount) </span></div>
+
+
+
+    
+    <div style="position: absolute; top: 600px; left: 55px;"><span class="ft16">@Html.Raw(ViewBag.ToWord)</span></div>
+@*    <div style="position: absolute; top: 694px; left: 506px"><span class="ft16">[ GST PAYABLE ON REVERSE CHARGE: N/A ]</span></div>
+*@   
+
+
+    
+    <div style="position: absolute; top: 724px; left: 175px"><span class="ft0">@Model.Company2.Bank</span></div>
+    <div style="position: absolute; top: 760px; left: 175px"><span class="ft0">@Model.Company2.Account_No</span></div>
+	<div style="position: absolute; top: 790px; left: 175px"><span class="ft0">@Model.Company2.RTGS</span></div>
+    
+	
+    <div style="position: absolute; top: 824px; left: 456px"><span class="ft1">For :</span></div>
+    <div style="position: absolute; top: 824px; left: 495px"><span class="ft1">@Model.Company2.Name </span></div>
+    <!--<div style="position: absolute; top: 913px; left: 33px"><span class="ft5">(1). Form "C" to be submitted monthly.  </span></div>-->
+
+    <div style="position: absolute; top: 945px; text-align:center;width:850px"><span class="ft1"> All matters Subject to @Model.Company2.City  Jurisdiction.  </span></div>
+
+
+
+    <script type="text/javascript">
+        var currentZoom = parent.ltop.currentZoom;
+        if (currentZoom != undefined)
+            document.body.style.zoom = currentZoom / 100;
+    </script>
+</body>

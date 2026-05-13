@@ -1,0 +1,125 @@
+﻿@model IEnumerable<Transport.Models.Transaction>
+
+@{
+    ViewBag.Title = "AccountView";
+    Layout = null;
+
+}
+
+<link type="text/css" href="~/Content/report.css" rel="stylesheet" />
+<link type="text/css" href="~/Content/bootstrap.css" rel="stylesheet" />
+<div class="main-1">
+    <div class="container">
+        <table class="table-condensed" style="width:100%">
+                <tr>
+@*                    <td  class="tblock" style="text-align:left;font-size:12px">&nbsp;</td>
+*@                  
+                    @if (ViewBag.RateBy == "Bill Rate")
+                    {
+                        <th colspan='6' class="tblock" style="font-size:14px;"><b># Account Statements *(B)</b></th>
+                    }
+                    else if (ViewBag.RateBy == "Cash Rate")
+                    {
+                        <th colspan='6' class="tblock" style="font-size:14px;"><b>Account Statements #(C)</b></th>
+                    }
+                    else
+                    {
+                        <th colspan='6' class="tblock" style="font-size:14px;"><b># Account Statements #</b></th>
+                    }
+                    
+                </tr>
+                <tr>
+                    <td colspan='6' style="text-align:center;font-size:14px;font-weight:bold">@ViewBag.From_Party</td>
+                </tr>
+                <tr>
+                    <td colspan='6' style="text-align:center;"><span style="border:1px solid #ccc;padding:5px;border-radius:2px">@ViewBag.From_Date TO  @ViewBag.To_Date</span></td>
+                </tr>
+                @if (@ViewBag.To_Party != "ALL")
+                {
+                    <tr>
+                        <td colspan='6' style="text-align:center;font-weight:600">@ViewBag.To_Party </td>
+                    </tr>
+                }
+                <tr>
+@*                  <th style="text-align:left;">S.NO</th>
+*@                  <th style="text-align:left;">Date</th>
+                    <th style="text-align:center;">Particular</th>
+                    <th style="text-align:center;">VType</th>
+                    <th style="text-align:center;">V.No.</th>
+                    <th style="text-align:center;">Debit</th>
+                    <th style="text-align:center;">Credit</th>
+                </tr>
+            @{
+                //int I = 1;
+                foreach (var item in Model.ToArray())
+                {
+                <tr>
+@*                    <td style="text-align:left;">@(I++)</td>
+*@                                        
+                    @if (item.Particular == "Opening Balance")
+                    {
+                        <td style="text-align:left;" colspan="4"><b>@item.Particular.ToUpper()</b></td>
+                    }
+                    else
+                    { 
+                        <td style="text-align:left;">@item.Voucher_Date.ToString("dd-MMM-yyyy")</td>
+                        if (ViewBag.To_Party != "ALL")
+                        {
+                            <td style="text-align:left;">@item.Particular</td>
+                        }
+                        else
+                        {
+                            <td style="text-align:left;"> @item.Company1.Name</td>
+                        }
+                    }
+                                        
+                    @if (item.Particular != "Opening Balance")
+                    {
+                        if (item.DrCr == "Dr")
+                        {
+                        <td style="text-align:center;"><i>Sales</i></td>
+                        }
+                        else
+                        {
+                        <td style="text-align:center;"><i>Receipt</i></td>
+                        }
+                                                
+                        <td style="text-align:center;font-weight:bold">@item.Voucher_No</td>                    
+                    }
+                    @if (item.DrCr == "Dr")
+                    {
+                        <td style="text-align:right;">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", item.Amount1)</td>
+                        <td style="text-align:right;"></td>
+                    }
+                    else
+                    {
+                        <td style="text-align:right;"></td>
+                        <td style="text-align:right;">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", item.Amount1)</td>
+                    }
+                </tr>
+                }
+            }
+            <tr>
+                <th colspan='4'>Total (Rs)</th>
+                <th style="text-align:right;">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Model.Where(x => x.DrCr == "Dr").Sum(x => x.Amount1))</th>
+                <th style="text-align:right;">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Model.Where(y => y.DrCr == "Cr").Sum(y => y.Amount1))</th>
+            </tr>
+            <tr>
+                <th colspan='4' >By Closing Balance ::</th>
+                <th></th>
+                <th style="text-align:right;font-size:18px">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", (Model.Where(x => x.DrCr == "Dr").Sum(x => x.Amount1) - Model.Where(x => x.DrCr == "Cr").Sum(x => x.Amount1)))</th>
+            </tr>
+            <tr style="border-top:3px" >
+                <th colspan='4' >Total Balance Amount:</th>
+                <th style="text-align:right;">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", @Model.Where(x => x.DrCr == "Dr").Sum(x => x.Amount1))</th>
+                <th style="text-align:right;">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", (Model.Where(y => y.DrCr == "Cr").Sum(y => y.Amount1) + (Model.Where(x => x.DrCr == "Dr").Sum(x => x.Amount1) - Model.Where(x => x.DrCr == "Cr").Sum(x => x.Amount1))))</th>
+            </tr>
+            <tr>
+                <th colspan='2'>C/B In Words::</th>
+                <th colspan='4' style="text-align:right">@((new Transport.Converter.IndiaCurrencyConverter()).ConvertToWord((Model.Where(x => x.DrCr == "Dr").Sum(x => x.Amount1) - Model.Where(x => x.DrCr == "Cr").Sum(x => x.Amount1)).ToString("##"),null))</th>
+            </tr>
+            <tr><td colspan='6' class="tblock" >Print Date @DateTime.Now.Date.ToString("dd-MMM-yyyy")</td></tr>
+            <tr><td class="tblank" colspan="6">&nbsp;</td></tr>
+        </table>
+    </div>
+</div>

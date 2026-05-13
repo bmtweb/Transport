@@ -1,0 +1,97 @@
+﻿@model IEnumerable<Transport.Models.Invoice>
+
+@{
+    ViewBag.Title = "To Pay/To be billed Report (Paid Only)";
+    Layout = null;
+}
+<link type="text/css" href="~/Content/bootstrap.css" rel="stylesheet" />
+<link type="text/css" href="~/Content/report.css" rel="stylesheet" />
+<div class="main-1">
+    <div class="container">
+        <table class="table-condensed" style="width: 100%;">
+            <tr>
+                <td colspan='2' class="tblock" style="text-align:left;font-size:12px">Branch:- @ViewBag.Branch </td>
+                <th colspan='3' class="tblock"><b>@ViewBag.btype ( @ViewBag.ptype)</b></th>
+                <td colspan='2' class="tblock" >Print Date @DateTime.Now.Date.ToString("dd-MMM-yyyy")</td>
+            </tr>
+            <tr>
+                <td colspan='7' style="text-align:center;font-size:14px;font-weight:bold">@ViewBag.From_Party</td>
+            </tr>
+            @{
+            if(Request["orderstatus"] == "Invoice_Date")
+            {
+            <tr>
+                <td colspan="2">
+                    <span style="border:1px solid Navy;background-color:Orange;color:White;font-weight:bold;border-radius:2px;padding:5px">Order by:BILTY DATE</span>
+                </td>
+                <td colspan='3' style="text-align:center;"><span style="border:1px solid #ccc;padding:5px;border-radius:2px">
+                    @ViewBag.From_Date <b>TO</b> @ViewBag.To_Date</span>
+                </td>
+                <td colspan="2" style="background:none"></td>
+            </tr>
+            }
+            else
+            {
+            <tr>
+                <td colspan="2">
+                    <span style="border:1px solid Navy;background-color:Orange;color:White;font-weight:bold;border-radius:2px;padding:5px">Order by:PAID DATE</span>
+                </td>
+                <td colspan='3' style="text-align:center;"><span style="border:1px solid #ccc;padding:5px;border-radius:2px">
+                    @ViewBag.From_Date <b>TO</b> @ViewBag.To_Date</span>
+                </td>
+                <td colspan="2" style="background:none"></td>
+            </tr>
+            }
+            }
+            @if (@ViewBag.To_Party != "ALL")
+            {
+            <tr>
+                <td colspan='7' style="text-align:center;font-weight:600;border-top:none">@ViewBag.To_Party </td>
+            </tr>
+            }
+            
+            @if (@ViewBag.ttype != "ALL")
+            {
+            <tr>
+                <td colspan='7' style="text-align:center;font-weight:600;border-top:none">Secondary Transport :@ViewBag.ttype</td>
+            </tr>
+            }
+            <tr>
+                <th>S.NO</th>
+                <th class="tblock">Bilty No</th>
+                <th class="tblock">Bilty Date</th>
+                <th class="tblock">Due Amt </th>
+                <th class="tblock">Paid Amt </th>
+                <th class="tblock">Paid Date </th>
+                <th class="tblock">Remark</th>
+            </tr>
+            @foreach (var gitem in Model.GroupBy(x => new { x.Transport_Id, Supplier = x.Company1.Name }))
+            {
+                <tr>
+                    <th  colspan="7" class="grpblock2">@gitem.Key.Supplier</th>
+                </tr>
+                int I = 1;
+                foreach (var item in Model.Where(x => x.Transport_Id == gitem.Key.Transport_Id).ToArray())
+                {
+                <tr>
+                    <td>@(I++)</td>
+                    <td>@item.Billty_No</td>
+                    <td>@item.Invoice_Date.ToString("dd-MMM-yyyy")</td>
+                    <td style="text-align: right;">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:N2}", @item.Deposit_Amount-@item.Advance ) </td>
+                    <td style="text-align: right;border-left:1px solid #ccc">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:N2}", @item.Paid_Amount)</td>
+                    <td>@item.Paid_Date.Value.ToString("dd-MMM-yy")</td>
+                    <td></td>
+                </tr>
+                }
+                <tr>
+                    <th colspan='3' class="grpblock2">Total :</th>
+                    <th style="text-align: right;">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:C}", @Model.Where(x => x.Transport_Id == gitem.Key.Transport_Id).Sum(x => (x.Deposit_Amount-x.Advance)))</th>
+                    <th style="text-align: right;">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:C}",@Model.Where(x => x.Transport_Id == gitem.Key.Transport_Id).Sum(x => x.Paid_Amount))</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            }
+        </table>
+    </div>
+</div>
+

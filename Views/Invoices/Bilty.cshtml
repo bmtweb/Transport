@@ -1,0 +1,153 @@
+﻿@model Transport.Models.Invoice
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Bilty</title>
+<style> 
+<!-- 
+select {font-size:12px;}
+A:link {text-decoration: none; color: blue}
+A:visited {text-decoration: none; color: purple}
+A:active {text-decoration: red}
+A:hover {text-decoration: underline; color:red}
+-->
+</style>
+<script TYPE="text/javascript"> 
+<!-- hide 
+    function killerrors() {
+        return true;
+    }
+    window.onerror = killerrors;
+    // --> 
+</script>
+<style type="text/css"> 
+<!--
+.ft0{font-style:normal;font-weight:bold;font-size:11px;font-family:Verdana;color:#ffffff;}
+.ft1{font-style:normal;font-weight:bold;font-size:30px;font-family:Tahoma;color:#000000;}
+.ft2{font-style:normal;font-weight:normal;font-size:11px;font-family:Verdana;color:#000000;}
+.ft3{font-style:normal;font-weight:bold;font-size:15px;font-family:Verdana;color:#000000;}
+.ft4{font-style:normal;font-weight:bold;font-size:12px;font-family:Verdana;color:#000000;}
+.ft5{font-style:normal;font-weight:bold;font-size:13px;font-family:Verdana;color:#000000;}
+.ft6{font-style:normal;font-weight:bold;font-size:19px;font-family:Calibri;color:#000000;}
+.ft7{font-style:normal;font-weight:normal;font-size:13px;font-family:Verdana;color:#000000;}
+.ft8{font-style:normal;font-weight:normal;font-size:19px;font-family:Times New Roman;color:#000000;}
+.ft9{font-style:normal;font-weight:bold;font-size:13px;font-family:Verdana;color:#ffffff;}
+.ft10{font-style:normal;font-weight:bold;font-size:11px;font-family:Verdana;color:#000000;}
+.ft11{font-style:normal;font-weight:bold;font-size:16px;font-family:Verdana;color:#ffffff;}
+-->
+</style>
+</head>
+<body vlink="#FFFFFF" link="#FFFFFF" bgcolor="#ffffff">
+ 
+<script TYPE="text/javascript">
+    var currentpos, timer;
+    function initialize() {
+        timer = setInterval("scrollwindow()", 10);
+    }
+    function sc() {
+        clearInterval(timer);
+    }
+    function scrollwindow() {
+        currentpos = document.body.scrollTop;
+        window.scroll(0, ++currentpos);
+        if (currentpos != document.body.scrollTop)
+            sc();
+    }
+    document.onmousedown = sc
+    document.ondblclick = initialize
+</script>
+<div style="position:absolute;top:5px; left:-4px"><img width="850" height="1100" src="~/Content/images/pg_0003.jpg" alt="abc"/></div>
+<div style="position:absolute;top:44px; left:46px"><span class="ft0">Reg No:</span></div>
+<div style="position:absolute;top:69px; left:46px"><span class="ft0">Pan No:</span></div>
+
+	
+<div style="position:absolute;top:84px;width:850px;text-align:center"><span class="ft1">@Model.Company1.Name</span></div>
+<div style="position:absolute;top:120px;width:850px;text-align:center"><span class="ft2">@Model.Company1.City, @Model.Company1.Dist (@Model.Company1.State) </span></div>
+<div style="position:absolute;top:44px; left:108px"><span class="ft2">@Model.Company1.Reg_No</span></div>
+
+	
+	
+<div style="position:absolute;top:69px; left:108px"><span class="ft2">@Model.Company1.Pan_No</span></div>
+<div style="position:absolute;top:33px; left:316px"><span class="ft2">All Subjects to Udaipur jurisdiction</span></div>
+<div style="position:absolute;top:141px; left:49px"><span class="ft0">Bank Name:</span></div>
+<div style="position:absolute;top:141px; left:351px"><span class="ft0"> Acc No:</span></div>
+<div style="position:absolute;top:141px; left:591px"><span class="ft0"> RTGS Code</span></div>
+<div style="position:absolute;top:141px; left:142px"><span class="ft2">@Model.Company1.Bank</span></div>
+<div style="position:absolute;top:141px; left:433px"><span class="ft2"> @Model.Company1.Account_No</span></div>
+<div style="position:absolute;top:141px; left:683px"><span class="ft2"> @Model.Company1.RTGS</span></div>
+<div style="position:absolute;top:178px; left:604px"><span class="ft5">Bilty No:</span></div>
+<div style="position:absolute;top:203px; left:619px"><span class="ft5">Date</span></div>
+<div style="position:absolute;top:228px; left:603px"><span class="ft5">Truck No</span></div>
+<div style="position:absolute;top:253px; left:595px"><span class="ft5">Royalty No</span></div>
+<div style="position:absolute;top:278px; left:617px"><span class="ft5">From</span></div>
+<div style="position:absolute;top:303px; left:628px"><span class="ft5">To</span></div>
+<div style="position:absolute;top:161px; left:72px"><span class="ft0">Sender Detail:</span></div>
+<div style="position:absolute;top:344px; left:56px"><span class="ft0">S No</span></div>
+<div style="position:absolute;top:344px; left:146px"><span class="ft0"> PARTICULAR</span></div>
+<div style="position:absolute;top:344px; left:300px"><span class="ft0"> WEIGHT </span></div>
+<div style="position:absolute;top:357px; left:309px"><span class="ft0">(M.T.)</span></div>
+<div style="position:absolute;top:344px; left:396px"><span class="ft0"> FREIGHT</span></div>
+<div style="position:absolute;top:357px; left:408px"><span class="ft0">RATE</span></div>
+<div style="position:absolute;top:344px; left:505px"><span class="ft0"> FARE</span></div>
+<div style="position:absolute;top:357px; left:504px"><span class="ft0">(RS.)</span></div>
+<div style="position:absolute;top:336px; left:674px"><span class="ft5"> Special</span></div>
+<div style="position:absolute;top:175px; left:706px"><span class="ft6">@Model.Billty_No</span></div>
+<div style="position:absolute;top:203px; left:700px"><span class="ft7">@Model.Invoice_Date.ToString("dd-MMM-yyyy")</span></div>
+<div style="position:absolute;top:278px; left:700px"><span class="ft7">@Model.From_City</span></div>
+<div style="position:absolute;top:303px; left:700px"><span class="ft7">@Model.To_City</span></div>
+<div style="position:absolute;top:253px; left:700px"><span class="ft7">@Model.Royalty_No</span></div>
+<div style="position:absolute;top:228px; left:700px"><span class="ft7">@Model.Truck_No</span></div>
+<div style="position:absolute;top:186px; left:50px"><span class="ft5">@Model.Company2.Name</span></div>
+<div style="position:absolute;top:252px; left:133px"><span class="ft2">@Model.Company2.City</span></div>
+<div style="position:absolute;top:277px; left:133px"><span class="ft2">@Model.Company2.Dist</span></div>
+<div style="position:absolute;top:302px; left:133px"><span class="ft2">@Model.Company2.State</span></div>
+<div style="position:absolute;top:186px; left:333px"><span class="ft5"> @Model.Company.Name</span></div>
+<div style="position:absolute;top:252px; left:408px"><span class="ft2">@Model.Company.City</span></div>
+<div style="position:absolute;top:277px; left:408px"><span class="ft2">@Model.Company.Dist</span></div>
+<div style="position:absolute;top:302px; left:408px"><span class="ft2">@Model.Company.State</span></div>
+<div style="position:absolute;top:400px; left:66px"><span class="ft8">1</span></div>
+<div style="position:absolute;top:400px; left:100px;width:150px;"><span class="ft8">@Model.Product.Name </span></div>
+<div style="position:absolute;top:400px; left:305px"><span class="ft8"> @Model.Weight</span></div>
+<div style="position:absolute;top:400px; left:405px"><span class="ft8"> @Model.Freight_Rate</span></div>
+<div style="position:absolute;top:400px; left:496px"><span class="ft8"> @Model.Freight</span></div>
+<div style="position:absolute;top:361px; left:597px"><span class="ft2"> @ViewBag.Taxable% of freight amount (Rs)</span></div>
+<div style="position:absolute;top:411px; left:592px"><span class="ft2">(b) Education Cess on service</span></div>
+<div style="position:absolute;top:386px; left:592px"><span class="ft2"> (a) Service Tax @@ @ViewBag.ServiceTax%</span></div>
+<div style="position:absolute;top:427px; left:658px"><span class="ft2">@@ @ViewBag.Education_Cess%</span></div>
+<div style="position:absolute;top:444px; left:658px"><span class="ft2">@@ @ViewBag.SHEC%</span></div>
+<div style="position:absolute;top:469px; left:608px"><span class="ft2">Payable By</span></div>
+<div style="position:absolute;top:469px; left:717px"><span class="ft2"> CONSIGNEE</span></div>
+<div style="position:absolute;top:469px; left:52px"><span class="ft0">Received Weight :</span></div>
+<div style="position:absolute;top:494px; left:44px"><span class="ft9">NOTE :</span></div>
+<div style="position:absolute;top:427px; left:725px"><span class="ft10">@ViewBag.Education_CessAmt</span></div>
+<div style="position:absolute;top:444px; left:730px"><span class="ft10">@ViewBag.SHECAmt</span></div>
+<div style="position:absolute;top:252px; left:50px"><span class="ft10">CITY :</span></div>
+<div style="position:absolute;top:277px; left:50px"><span class="ft10">DISTRICT:</span></div>
+<div style="position:absolute;top:302px; left:50px"><span class="ft10">STATE:</span></div>
+<div style="position:absolute;top:277px; left:333px"><span class="ft10"> DISTRICT:</span></div>
+<div style="position:absolute;top:302px; left:333px"><span class="ft10">STATE:</span></div>
+<div style="position:absolute;top:252px; left:333px"><span class="ft10">CITY :</span></div>
+<div style="position:absolute;top:469px; left:388px"><span class="ft0"> TOTAL (RS)</span></div>
+<div style="position:absolute;top:469px; left:342px"><span class="ft5">M.T.</span></div>
+<div style="position:absolute;top:469px; left:496px"><span class="ft5"> @Model.Freight</span></div>
+<div style="position:absolute;top:528px; left:521px"><span class="ft5">FOR :</span></div>
+<div style="position:absolute;top:528px; left:646px"><span class="ft5"> @Model.Company1.Name</span></div>
+<div style="position:absolute;top:161px; left:355px"><span class="ft0">Receipant Detail:</span></div>
+<div style="position:absolute;top:386px; left:755px"><span class="ft10"> @ViewBag.ServiceTaxAmt</span></div>
+<div style="position:absolute;top:361px; left:755px"><span class="ft10"></span>@ViewBag.TaxableAmt</div>
+<div style="position:absolute;top:498px; left:667px"><span class="ft11">TO PAY</span></div>
+<script TYPE="text/javascript">
+    var currentZoom = parent.ltop.currentZoom;
+    if (currentZoom != undefined)
+        document.body.style.zoom = currentZoom / 100;
+			</script>
+</body>
+
+</html>

@@ -1,0 +1,372 @@
+﻿﻿@model Transport.Models.Invoice
+
+@{
+    Layout = null;
+}
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Bilty</title>
+    <style>
+        <!--
+        select {
+            font-size: 12px;
+        }
+
+        A:link {
+            text-decoration: none;
+            color: blue;
+        }
+
+        A:visited {
+            text-decoration: none;
+            color: purple;
+        }
+
+        A:active {
+            text-decoration: red;
+        }
+
+        A:hover {
+            text-decoration: underline;
+            color: red;
+        }
+        -->
+    </style>
+    <script type="text/javascript"> 
+<!--        hide
+        function killerrors() {
+            return true;
+        }
+        window.onerror = killerrors;
+    // --> 
+    </script>
+    <style type="text/css">
+        <!--
+        .ft0 {
+            font-style: normal;
+            font-weight: bold;
+            font-size: 11px;
+            font-family: Verdana;
+            color: #000000;
+        }
+
+        .ft1 {
+            font-style: normal;
+            font-weight: bold;
+            font-size: 32px;
+            font-family: Times New Roman;
+            color: #000000;
+        }
+
+        .ft2 {
+            font-style: normal;
+            font-weight: normal;
+            font-size: 12px;
+            font-family: Verdana;
+            color: #000000;
+        }
+
+        .ft3 {
+            font-style: normal;
+            font-weight: bold;
+            font-size: 15px;
+            font-family: Verdana;
+            color: #000000;
+        }
+
+        .ft4 {
+            font-style: normal;
+            font-weight: bold;
+            font-size: 12px;
+            font-family: Verdana;
+            color: #000000;
+        }
+
+        .ft5 {
+            font-style: normal;
+            font-weight: bold;
+            font-size: 11px;
+            font-family: Verdana;
+            color: #ffffff;
+            text-align:center;
+        }
+
+        .ft6 {
+            font-style: normal;
+            font-weight: bold;
+            font-size: 9px;
+            font-family: Tahoma;
+            color: #000000;
+			border:2px;
+			border-radius:3px;
+        }
+
+        .ft7 {
+            font-style: normal;
+            font-weight: bold;
+            font-size: 13px;
+            font-family: Verdana;
+            color: #000000;
+        }
+
+        .ft8 {
+            font-style: normal;
+            font-weight: bold;
+            font-size: 19px;
+            font-family: Calibri;
+            color: #000000;
+        }
+
+        .ft9 {
+            font-style: normal;
+            font-weight: normal;
+            font-size: 13px;
+            font-family: Verdana;
+            color: #000000;
+        }
+
+        .ft10 {
+            font-style: normal;
+            font-weight: normal;
+            font-size: 12px;
+            font-family: Verdana;
+            color: #000000;
+        }
+
+        .ft11 {
+            font-style: normal;
+            font-weight: normal;
+            font-size: 19px;
+            font-family: Times New Roman;
+            color: #000000;
+        }
+
+        .ft12 {
+            font-style: normal;
+            font-weight: bold;
+            font-size: 13px;
+            font-family: Verdana;
+            color: #ffffff;
+        }
+
+        .ft13 {
+            font-style: normal;
+            font-weight: normal;
+            font-size: 27px;
+            font-family: Times New Roman;
+            color: #000000;
+        }
+
+        .ft14 {
+            font-style: normal;
+            font-weight: bold;
+            font-size: 16px;
+            font-family: Tahoma;
+            color: #000000;
+        }
+        -->
+    </style>
+</head>
+<body >
+
+    <script type="text/javascript">
+        var currentpos, timer;
+        function initialize() {
+            timer = setInterval("scrollwindow()", 10);
+        }
+        function sc() {
+            clearInterval(timer);
+        }
+        function scrollwindow() {
+            currentpos = document.body.scrollTop;
+            window.scroll(0, ++currentpos);
+            if (currentpos != document.body.scrollTop)
+                sc();
+        }
+        document.onmousedown = sc
+        document.ondblclick = initialize
+
+    </script>
+    <div style="position: absolute; top: 5px; left: -5px">
+    @{
+        if(ViewBag.ShowSign == "Y")
+        {
+            <img width="850" height="1100" src="~/Content/images/pg_0004S.jpg" alt="bilty1"/> 
+        }
+        else
+        {
+            <img width="850" height="1100" src="~/Content/images/pg_0004W.jpg" alt="bilty2"/> 
+        }
+        
+    }
+    </div>
+    <div style="position: absolute; top: 36px; left: 642px"><span class="ft0">Pan No:</span></div>
+    <div style="position: absolute; top: 36px; left: 700px"><span class="ft2">@Model.Company1.Pan_No</span></div>
+@*    <div style="position: absolute; top: 69px; left: 642px;display:none"><span class="ft0">Tel No :</span></div>
+*@  
+    <div style="position: absolute; top: 53px; left: 641px"><span class="ft0">Mob No:</span></div>
+    <div style="position: absolute; top: 53px; left: 700px"><span class="ft2">@Model.Company1.Mobile</span></div>
+
+    
+	<div style="position: absolute; top: 55px; width:850px;text-align:center"><span class="ft1">@Model.Company1.Name</span></div>
+    <div style="position: absolute; top: 94px; width:850px;text-align:center"><span class="ft0">@Model.Company1.Address </span></div>
+    <div style="position: absolute; top: 116px; width:850px;text-align:center"><span class="ft0">@Model.Company1.City, @Model.Company1.Dist (@Model.Company1.State)</span></div>
+    <div style="position: absolute; top: 136px;width:850px;text-align:center"><span class="ft0">GSTIN NO :- @Model.Company1.Reg_No</span></div>
+    <div style="position: absolute; top: 132px;text-align:left;LEFT:30px; border:solid 2px #000000;padding:3px;"><span class="ft0">REVERSE CHARGE : YES</span></div>
+   
+    <div style="position: absolute; top: 164px; left: 43px"><span class="ft5">Consigner Detail:</span></div>
+    <div style="position: absolute; top: 195px; left: 42px"><span class="ft7">@Model.Company2.Name </span></div>
+    <div style="position: absolute; top: 218px; left: 42px"><span class="ft10">@Model.Company2.City, @Model.Company2.State </span></div>
+    <div style="position: absolute; top: 247px; left: 42px"><span class="ft10">GSTIN No - @Model.Company2.TIN.ToString() </span></div>
+
+	<div style="position: absolute; top: 164px; left: 320px"><span class="ft5">Consignee Detail:</span></div>
+    <div style="position: absolute; top: 189px; left: 317px"><span class="ft7">@Model.Company.Name</span></div>
+    <div style="position: absolute; top: 213px; left: 317px"><span class="ft10">@Model.Company.City, @Model.Company.State</span></div>
+    <div style="position: absolute; top: 247px; left: 317px"><span class="ft10">GSTIN No - @Model.Company.TIN.ToString() </span></div>
+
+    <div style="position: absolute; top: 172px; left: 583px"><span class="ft7">Bilty No:</span></div>
+    <div style="position: absolute; top: 197px; left: 583px"><span class="ft7">Date</span></div>
+    <div style="position: absolute; top: 221px; left: 583px"><span class="ft7">Truck No</span></div>
+    <div style="position: absolute; top: 246px; left: 583px"><span class="ft7">Royalty No</span></div>
+    <div style="position: absolute; top: 271px; left: 583px"><span class="ft7">From</span></div>
+    <div style="position: absolute; top: 296px; left: 583px"><span class="ft7">To</span></div>
+
+    <div style="position: absolute; top: 197px; left: 683px"><span class="ft9">@Model.Invoice_Date.ToString("dd-MMM-yyyy")</span></div>
+    <div style="position: absolute; top: 272px; left: 683px"><span class="ft9">@Model.From_City</span></div>
+    <div style="position: absolute; top: 297px; left: 683px"><span class="ft9">@Model.To_City</span></div>
+    <div style="position: absolute; top: 247px; left: 683px"><span class="ft9">@Model.Royalty_No</span></div>
+    <div style="position: absolute; top: 222px; left: 683px"><span class="ft9">@Model.Truck_No</span></div>
+
+    <div style="position: absolute; top: 280px; left: 80px"><span class="ft5">PARTICULAR</span></div>
+    <div style="position: absolute; top: 280px; left: 222px"><span class="ft5" >HSN <br />CODE</span></div>
+    <div style="position: absolute; top: 280px; left: 302px"><span class="ft5">WEIGHT </span></div>
+    <div style="position: absolute; top: 294px; left: 311px"><span class="ft5">(M.T.)</span></div>
+    <div style="position: absolute; top: 280px; left: 378px"><span class="ft5" >FREIGHT <br />RATE</span></div>
+ <!--   <div style="position: absolute; top: 294px; left: 390px"><span class="ft5">RATE</span></div>//-->
+    <div style="position: absolute; top: 280px; left: 495px"><span class="ft5">FARE</span></div>
+    <div style="position: absolute; top: 294px; left: 486px"><span class="ft5">RS. &nbsp;&nbsp;&nbsp;              P.</span></div>
+    <div style="position: absolute; top: 330px; left: 672px"><span class="ft7">Special</span></div>
+
+    <div style="position: absolute; top: 336px; left: 42px;width:170px"><span class="ft2"><strong>@Model.Product.Name </strong></span></div>
+    <div style="position: absolute; top: 337px; left: 212px"><span class="ft0">@Model.Product.HSNCode</span></div>
+    <div style="position: absolute; top: 337px; left: 307px"><span class="ft11">@Model.Weight</span></div>
+
+    <div style="position: absolute; top: 168px; left: 689px"><span class="ft8">@Model.Billty_No</span></div>
+
+
+
+    <div style="position: absolute; top: 336px; left: 372px;text-align:right;width:50px"><span class="ft11">@Model.Freight_Rate</span></div>
+    <div style="position: absolute; top: 336px; left: 408px;text-align:right;width:105px"><span class="ft11">@Model.Freight</span></div>
+
+<!--    
+    <div style="position: absolute; top: 355px; left: 588px"><span class="ft2">@ViewBag.Taxable% of freight amount (Rs)</span></div>
+    <div style="position: absolute; top: 405px; left: 583px"><span class="ft2">(b) Education Cess on service</span></div>
+    <div style="position: absolute; top: 380px; left: 583px"><span class="ft2">(a) Service Tax @@ @ViewBag.ServiceTax%</span></div>
+    <div style="position: absolute; top: 422px; left: 650px"><span class="ft2">@@ @ViewBag.Education_Cess%</span></div>
+    <div style="position: absolute; top: 439px; left: 650px"><span class="ft2">@@ @ViewBag.SHEC%</span></div>
+//-->
+
+    <div style="position: absolute; top: 355px; left: 583px"><span class="ft2">TOTAL FREIGHT (Rs)</span></div>
+    <div style="position: absolute; top: 355px; left: 755px;"><span class="ft7">@Model.Freight</span></div>
+    <div style="position: absolute; top: 380px; left: 583px">
+     @*  @{
+           if (Model.Company.State.ToUpper() == "RAJASTHAN")
+        {
+        <span class="ft2">CGST : 2.5%</span>
+        }
+        else
+        {
+        <span class="ft2">CGST : 0 %</span>
+        }
+        }
+*@
+   </div>
+    <div style="position: absolute; top: 380px; left: 755px">
+  @*     @{
+           if (Model.Company.State.ToUpper() == "RAJASTHAN")
+        {
+        <span class="ft0">(@(Model.Freight/4))</span>
+        }
+        else
+        {
+        <span class="ft0">0  </span>
+        }
+        }
+*@
+    </div>
+
+    <div style="position: absolute; top: 395px; left: 583px">
+  @*     @{
+           if (Model.Company.State.ToUpper() == "RAJASTHAN")
+        {
+        <span class="ft2">CGST : 2.5%</span>
+        }
+        else
+        {
+        <span class="ft2">CGST : 0 %</span>
+        }
+        }
+*@
+   </div>
+    <div style="position: absolute; top: 395px; left: 755px">
+  @*     @{
+           if (Model.Company.State.ToUpper() == "RAJASTHAN")
+        {
+        <span class="ft0">(@(Model.Freight/4))</span>
+        }
+        else
+        {
+        <span class="ft0">0  </span>
+        }
+        }
+*@
+    </div>
+@*
+    <div style="position: absolute; top: 412px; left: 583px"><span class="ft2"> IGST : @ViewBag.ServiceTax %</span></div>
+    <div style="position: absolute; top: 412px; left: 755px"><span class="ft0"> @ViewBag.ServiceTaxAmt</span></div>
+    <div style="position: absolute; top: 439px; left: 583px;display:none"><span class="ft7"> Gross Total :- </span></div>
+    <div style="position: absolute; top: 439px; left: 755px;display:none"><span class="ft7">  @ViewBag.TotalFrgAmt</span></div>
+  *@  
+    <div style="position: absolute; top: 434px; left: 583px"><span class="ft2">Payable By :</span></div>
+    <div style="position: absolute; top: 434px; left: 692px"><span class="ft2">CONSIGNEE</span></div>
+    <!--<div style="position: absolute; top: 497px; left: 36px"><span class="ft12">NOTE :</span></div>
+//-->
+
+
+    <div style="position: absolute; top: 452px; left: 370px"><span class="ft5">TOTAL (RS)</span></div>
+    <div style="position: absolute; top: 450px; left: 408px;text-align:right;width:105px"><span class="ft7">@Model.Freight</span></div>
+    <div style="position: absolute; top: 505px; left: 581px"><span class="ft7">FOR :</span></div>
+    <div style="position: absolute; top: 505px; left: 625px"><span class="ft7">@Model.Company1.Name</span></div>
+    <div style="position: absolute; top: 560px; left: 635px"><span class="ft7" style="font-weight:bold">(Auth. Signature)</span></div>
+
+	    <div style="position: absolute; top: 510px; left: 75px;"><span class="ft7">Bank Name</span></div>
+    <div style="position: absolute; top: 510px; left: 275px;"><span class="ft7">Acc No</span></div>
+    <div style="position: absolute; top: 510px; left: 460px;"><span class="ft7">IFSC</span></div>
+
+	<div style="position: absolute; top: 550px; left: 42px;"><span class="ft7">@Model.Company1.Bank</span></div>
+    <div style="position: absolute; top: 550px; left: 235px;"><span class="ft7">@Model.Company1.Account_No</span></div>
+    <div style="position: absolute; top: 550px; left: 410px;"><span class="ft7">@Model.Company1.RTGS</span></div>
+
+
+
+@*	<div style="position: absolute; top: 575px; left: 42px;"><span class="ft5" style="color:#000000">Bank :</span></div>
+    <div style="position: absolute; top: 595px; left: 42px"><span class="ft5" style="color:#000000">Acc No:</span></div>
+    <div style="position: absolute; top: 615px; left: 42px"><span class="ft5" style="color:#000000">IFSC Code</span></div>
+
+    <div style="position: absolute; top: 575px; left: 125px"><span class="ft2">@Model.Company1.Bank</span></div>
+    <div style="position: absolute; top: 595px; left: 125px"><span class="ft2">@Model.Company1.Account_No</span></div>
+    <div style="position: absolute; top: 615px; left: 125px"><span class="ft2">@Model.Company1.RTGS</span></div>
+*@	
+    <div style="position: absolute; top: 467px; left: 637px"><span class="ft14">FREIGHT PAID</span></div>
+    <script type="text/javascript">
+        var currentZoom = parent.ltop.currentZoom;
+        if (currentZoom != undefined)
+            document.body.style.zoom = currentZoom / 100;
+    </script>
+</body>
+</html>

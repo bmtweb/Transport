@@ -1,0 +1,97 @@
+﻿@using Newtonsoft.Json;
+@{
+
+    Transport.Models.SalesConn con = new Transport.Models.SalesConn();
+    Transport.Models.Menu[] menus = null;
+    Transport.Models.User usr = null;
+    Transport.Models.Permission[] per = null;
+    string Branches = null;
+    
+    if (Request.IsAuthenticated)
+    {
+        var cookie = Request.Cookies[FormsAuthentication.FormsCookieName];
+        
+        Branches = Request.Cookies["Branches"] == null ? "" : Request.Cookies["Branches"].Value;
+
+        var decrypted = FormsAuthentication.Decrypt(cookie.Value);
+
+        if (!string.IsNullOrEmpty(decrypted.UserData))
+        {
+            usr = JsonConvert.DeserializeObject<Transport.Models.User>(decrypted.UserData);
+        }
+
+        per = con.Permissions.Where(x => x.Role_Id == usr.Role_Id).ToArray();
+        int[] arr = per.Select(x => x.Menu.Perent_Id).Distinct().ToArray();
+        menus = con.Menus.Where(x => arr.Contains(x.Id)).ToArray();
+        
+    }
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        document.cookie = "Branches=" + $('#Branches').val() + "; path=/";
+
+        $("#Branches").change(function () {
+            document.cookie = "Branches=" + $(this).val() + "; path=/";
+            document.location.reload(true);
+        });
+    })
+</script>
+<div class="container">
+    <nav class="navbar navbar-default">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">
+                    <img src="~/Content/images/sms-logo.png" style="height: 30px" class="img-responsive" alt="" /></a>
+            </div>
+
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" style="background-color:#C8F26D">
+                <ul class="nav navbar-nav">
+                    @if (Request.IsAuthenticated)
+                    {
+                        foreach (var item in menus.Where(x => x.Perent_Id == 0))
+                        {
+                        <li class="dropdown" style="background-color:#C8F26D">
+
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">@item.Menu1 <span class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+                                @foreach (var it in per.Select(x => x.Menu).ToArray().Where(x => x.Perent_Id == item.Id))
+                                {
+                                    if (per.Where(x => x.Menu_Id == it.Id).Count() > 0)
+                                    {
+                                    <li><a href="@it.Url">@it.Menu1</a></li>
+                                    }
+                                }
+                            </ul>
+                        </li>                            
+                        }
+                    }
+                </ul>
+                
+                <ul class="nav navbar-nav navbar-right">
+
+                    @if (Request.IsAuthenticated)
+                    {
+                        <li>
+                        
+                            <a href="#">  @Html.DropDownList("Branches", new SelectList(usr.User_Branches.Select(x => new { Id = x.Branch.Id, Name = x.Branch.Name}), "Id", "Name", Branches), new { @class = "form-control" })</a>                           
+                        </li>
+                        
+                        <li><a href="/Home/Logout">Logout</a></li>
+                    }
+                    else
+                    {
+                        <li><a href="/Home/Login">Login</a></li>
+                    }
+                </ul>
+            </div>
+        </div>
+        
+    </nav>
+    
+</div>

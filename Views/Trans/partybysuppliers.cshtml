@@ -1,0 +1,90 @@
+﻿@model PagedList.IPagedList<Transport.Models.Transaction>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "Party by supplier";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    $(document).ready(function () {
+
+        if ($('#divmsg').html().trim().length > 1) {
+            $('#divmsg').dialog();
+        }
+
+        $("#ddlcomp").change(function () {
+            location.href = "/trans/partybysuppliers/?comp=" + $(this).val();
+        });
+
+        $("#btnAdd").click(function () {
+            location.href = "/trans/partybysupplier?comp=" + $("#ddlcomp").val();
+        });
+    })
+
+   
+</script>
+<div class="main-1">
+    <div class="container">
+        <div class="warning" id="divmsg" title="Message">
+            @TempData["message"]
+        </div>
+        <ul class="breadcrumb">
+            <li><a href="#">Party by supplier</a></li>
+        </ul>
+        @using (Html.BeginForm())
+        {
+            <div class="btn-group">
+                @Html.DropDownList("ddlcomp", ((SelectList)ViewBag.Companies), new { @class = "btn" })
+                <input type="button" id="btnAdd" value="Add New" class="btn btn-info btn-small">
+            </div>
+            <div class="row form-horizontal">
+                <div class="form-group">
+                    <table class="table table-responsive">
+                        <tr>
+                            <th>
+                                <div class="col-xs-12">
+                                    <div class="col-md-5">
+                                        <div class="col-xs-5"></div>
+                                        <div class="col-xs-7">Receipant Party</div>
+                                    </div>
+                                    <div class="col-md-7">
+                                        <div class="col-md-3">Date</div>
+                                        <div class="col-md-3">Bill Opening Amt</div>
+                                        <div class="col-md-3">Cash Opening Amt</div>
+                                        <div class="col-md-3">Type</div>
+                                    </div>
+                                </div>
+                            </th>
+                        </tr>
+
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="col-xs-12">
+                                        <div class="col-md-5">
+                                            <div class="col-xs-5">@Html.ActionLink("Edit", "partybysupplier", new { id = item.Id })</div>
+                                            <div class="col-xs-7">@item.Company1.Name</div>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <div class="col-md-3">@item.Voucher_Date.ToString("dd/MMM/yyyy")</div>
+                                            <div class="col-md-3">@item.Amount1</div>
+                                            <div class="col-md-3">@item.Amount2</div>
+                                            <div class="col-md-3">@item.DrCr</div>
+                                        </div>
+                                    </div>
+                            </tr>
+                        }
+
+                    </table>
+
+                </div>
+            </div>
+            <div>
+                Page  @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+                @Html.PagedListPager(Model, page => Url.Action("partybysuppliers", new { page, comp = ViewBag.company_id }))
+            </div>
+        }
+        <br />
+        <br />
+    </div>
+</div>

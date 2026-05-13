@@ -1,0 +1,141 @@
+﻿@model PagedList.IPagedList<Transport.Models.Receipt>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "Freight payment rec";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    
+    $(document).ready(function () {
+        if ($('#divmsg').html().trim().length > 1) {
+            $('#divmsg').dialog();
+        }
+
+        $("#ddlcomp").change(function () {
+            location.href = "/trans/partyfrieghtreceipts/?comp=" + $(this).val();
+        });
+
+        $("#btnAdd").click(function () {
+            location.href = "/trans/partyfrieghtreceipt?comp=" + $("#ddlcomp").val();
+        });
+
+        $("#btnFilter").click(function () {
+            location.href = "/trans/partyfrieghtreceipts/?comp=" + $("#ddlcomp").val() + "&recp=" + $("#txtFilter").val();
+        });
+    })
+
+   
+</script>
+<div class="main-1">
+    <div class="container">
+        <div class="warning" id="divmsg">
+            @TempData["message"]
+              
+        </div>
+        <ul class="breadcrumb">
+           <li><a href="#">Accounts</a></li>
+            <li><a href="#">Party Frieght Receipts</a></li>
+        </ul>
+        @using (Html.BeginForm())
+        {
+            <div class="form-group">
+
+            <div class="btn-group" style="float:left" style="border:solid 1px #cccccc ;border-radius:5px;padding:10px;background-color:Yellow">
+                <div class="col-md-4" style="text-align:right;margin-top:3px">
+                    <label >Select a Transport</label>
+                    </div>
+                    <div class="col-md-5">
+                        @Html.DropDownList("ddlcomp", ((SelectList)ViewBag.Companies), new { @class = "form-control combobox" })
+                    </div>
+                    <div class="col-md-3">
+                        <input type="button" id="btnAdd" value="Add New Freight Receipt " class="btn btn-info btn-small"/>
+                    </div>                
+                </div>
+
+                 <div class="btn" style="float:right">
+                    <label class="btn btn-info" style="background-color:ActiveCaption;color:White">Filter List By</label>
+                     @Html.TextBox("txtFilter",  (object)ViewBag.FindBy)
+                    <!--<input type="text" id="txtFilter" class="btn" style="border:solid;border-width:1px;text-align:left;width:100px"  />--> 
+                    <input type="button" class="btn btn-info " id ="btnFilter" value="View" />            
+                </div>
+            </div>
+            
+           @* <div class="col-md-12" style="border:solid 1px #cccccc ;border-radius:5px;padding:10px;background-color:Yellow">
+                <div class="col-md-4" style="text-align:right">
+                    <label >Select a Transport</label>
+                </div>
+                <div class="col-md-5">
+                    @Html.DropDownList("ddlcomp", ((SelectList)ViewBag.Companies), new { @class = "form-control combobox" })
+                </div>
+                <div class="col-md-3">
+                <input type="button" id="btnAdd" value="Add New Freight Receipt " class="btn btn-info btn-small"/>
+                </div>
+            </div>*@
+
+            <div class="row form-horizontal">
+                <div class="form-group">
+                    <table class="table table-bordered" >
+                        <tr>
+                            <th class="tblock" style="background-color:powderblue;font-size:14px">
+                                <div class="col-xs-12" >
+                                    <div class="col-md-4" >
+                                        <div class="col-md-2">S.No.</div>
+                                        <div class="col-md-10">Receipant Party</div>
+                                    </div>
+                                    <div class="col-xs-8">
+                                        <div class="col-md-2" style="text-align:center">Date</div>
+                                        <div class="col-md-3" style="text-align:center">Amount</div>
+                                        <div class="col-md-2" style="text-align:center">Bank</div>
+                                        <div class="col-md-3" style="text-align:center">Cheque</div>
+                                        <div class="col-xs-2" style="text-align:center">Action</div>
+                                    </div>
+                                </div>
+                            </th>
+                        </tr>
+                        @{
+                            int I = 1;
+                            foreach (var item in Model)
+                            {
+                            <tr>
+                                <td>
+                                    <div class="col-xs-12">
+                                        <div class="col-md-4">
+                                            <div class="col-md-2">@(I++)</div>
+                                            <div class="col-md-10">@item.Company1.Name</div>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div class="col-md-3" style="text-align:center">@item.Receipt_Date.ToString("dd-MMM-yyyy")</div>
+                                            <div class="col-md-2" style="text-align:center">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}",item.Amount)</div>
+                                            <div class="col-md-3" style="text-align:center">@item.Bank.ToString()</div>
+                                            <div class="col-md-2" style="text-align:center">@item.Cheque.ToString()</div>                
+                                            <div class="col-md-1" style="text-align:center;border:solid 1px;border-radius:4px;padding:3px">
+                                                <a href="@Url.Action("partyfrieghtreceipt", "trans", new { id = item.Id })" title="Click to Edit">
+                                                    <img src="@Url.Content("~/Content/images/edit.png")"  alt="EDIT"/>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </td>
+                            </tr>
+                            }
+                        }
+                    <tr>
+                        <td>
+                            <div class="col-md-12">
+                                    <div class="col-md-6" style="padding-left:20px;">
+                                        @Html.PagedListPager(Model, page => Url.Action("partyfrieghtreceipts", new { page, comp = ViewBag.company_id, recp = ViewBag.FindBy }))
+                                    </div>
+                                    <div class="col-md-6" style="text-align:right;font-weight:bold"><br /><br />
+                                        Page  @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount                    
+                                    </div>
+                            </div>
+                        </td>
+                    </tr>
+                    </table>
+                </div>
+            </div>
+
+            
+        }
+    </div>
+</div>

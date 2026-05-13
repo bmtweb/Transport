@@ -1,0 +1,100 @@
+﻿@model IEnumerable<Transport.Models.Invoice>
+@{
+    ViewBag.Title = "Loading Status Detail";
+    Layout = null;
+}
+<link href="~/Content/report.css" rel="stylesheet" />
+<link href="~/Content/bootstrap.css" rel="stylesheet" />
+<div class="main-1">
+    <div class="container">
+
+        <table class="table-condensed" style="width: 100%;">
+                <tr>
+                    <td colspan='2' class="tblock" style="text-align:left;font-size:12px">Branch:- @ViewBag.Branch </td>
+                    <th colspan='4' class="tblock"><b>Loading Status Detail</b></th>
+                    <td colspan='2' class="tblock" >Print Date @DateTime.Now.Date.ToString("dd-MMM-yyyy")</td>
+                </tr>
+                <tr>
+                    <td colspan='8' style="text-align:center;font-size:14px;font-weight:bold">@ViewBag.From_Party</td>
+                </tr>
+                <tr>
+                    <td colspan='8' style="text-align:center;border:1px solid #ccc"><span style="border:1px solid #ccc;padding:5px;border-radius:2px">@ViewBag.From_Date TO @ViewBag.To_Date</span></td>
+                </tr>
+                @if (@ViewBag.To_Party != "ALL")
+                {
+                    <tr>
+                        <td colspan='8' style="text-align:center;font-weight:600">@ViewBag.To_Party </td>
+                    </tr>
+                }
+
+            
+                @{
+                int I = 1;
+                //foreach (var pitem in Model.Where(x => x.Transport_Id == gitem.Key.Transport_Id).GroupBy(x => new { x.Loading_Id, x.Loading.Name }).Select(x => new { Loading_Id = x.Key.Loading_Id, Name = x.Key.Name, Weight = x.Sum(y => y.Weight), Advance = x.Sum(y => y.Advance) }).ToArray())
+                foreach (var litem in Model.GroupBy(x => new { x.Loading_Id, x.Loading.Name }).Select(x => new { Loading_Id = x.Key.Loading_Id, Name = x.Key.Name, Weight = x.Sum(y => y.Weight), Advance = x.Sum(y => y.Advance) }).ToArray())
+                {
+                <tr>
+                    <th>SNo</th>
+                    <th>Date</th>
+                    <th>LR No </th>
+                    <th>INV No </th>
+                    <th>Truck No </th>
+                    <th style="text-align: right;">Weight </th>
+                    <th style="text-align: right;">Royalty No  </th>
+                    <th style="text-align: right;">Loading Amount</th>
+                </tr>
+
+                    <tr>
+                        <th style="text-align:left;">LOADING FROM:</th>
+                        <th colspan="2" style="text-align:center;">@litem.Name</th>
+                        <th colspan="5" class="tblank">&nbsp;</th>    
+                    </tr>
+                    foreach (var mitem in Model.Where(x => x.Loading_Id== litem.Loading_Id).GroupBy(x => new { x.Product_Id, x.Product.Name }))
+                    {
+                        <tr>
+                            <th style="text-align:left;">MATERIAL:</th>
+                            <th colspan="2" style="text-align:center;background-color:Silver">@mitem.Key.Name</th>
+                            <th colspan="5" class="tblank">&nbsp;</th>    
+                        </tr>
+                        
+                        foreach (var item in Model.Where(x => x.Loading_Id == litem.Loading_Id).Where(x => x.Product_Id == mitem.Key.Product_Id).ToArray())
+                        {
+                            <tr>
+                                <td>@(I++)</td>
+                                <td>@item.Invoice_Date.ToString("dd-MMM-yyyy")</td>
+                                <td>@item.Billty_No</td>
+                                <td>@item.Invoice_No</td>
+                                <td>@item.Truck_No</td>
+                                <td style="text-align: right;">@item.Weight</td>
+                                <td style="text-align: right;">@item.Royalty_No</td>
+                                <td>0</td>
+                            </tr>
+                        }
+                    }
+                    <tr>
+                        <th colspan='5' style="text-align: right" >Loading Total :</th>
+                        <th style="text-align: right;">@litem.Weight</th>
+                        <th></th>
+    @*                  <th style="text-align: right;">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:C}",@pitem.Advance)</th>*@
+                        <th>0</th>    
+                    </tr>
+                    <tr><td colspan="8"></td></tr>                        
+                }
+                        
+                 <tr>
+                        <th colspan='5' style="text-align: right" class="grpblock2">Grand Total :</th>
+                        <th style="text-align: right;">@Model.Sum(x => x.Weight)</th>
+                        <th></th>
+                        @*<th style="text-align: right;">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:C}",@Model.Where(x => x.Transport_Id == gitem.Key.Transport_Id).Sum(x => x.Advance))</th>*@
+                        <th>0</th>
+                    </tr>
+                    <tr><td colspan="8"></td></tr>                        
+                }
+           
+            }
+        </table>
+
+
+
+    </div>
+</div>

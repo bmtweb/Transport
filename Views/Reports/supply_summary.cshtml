@@ -1,0 +1,146 @@
+﻿@model IEnumerable<Transport.Models.Invoice>
+
+@{
+    ViewBag.Title = "Material Delievery Detail";
+    Layout = null;
+}
+<link type="text/css" href="~/Content/report.css" rel="stylesheet" />
+<link type="text/css" href="~/Content/bootstrap.css" rel="stylesheet" />
+<div class="main-1">
+    <div class="container">
+
+        <table class="table-condensed" style="width:100%;">
+                <tr>
+                    <td  class="grpblock2" style="text-align:left;font-size:12px"><b>Branch:-</b> @ViewBag.Branch </td>
+                    <th  class="grpblock2" style="text-align:left"><b>Material Delievery Detail</b></th>
+                    <td  class="grpblock2" style="text-align:right"><b>Print Date:</b> @DateTime.Now.Date.ToString("dd-MMM-yyyy")</td>
+                </tr>
+                <tr>
+                    <td colspan='3' style="text-align:center;font-size:14px;font-weight:bold">@ViewBag.From_Party</td>
+                </tr>
+                <tr>
+                    <td colspan='3' style="text-align:center;"><span style="border:3px solid #ccc;padding:7px;border-radius:2px">Date :@ViewBag.From_Date - @ViewBag.To_Date</span></td>
+                </tr>
+        @if (ViewBag.To_Party != "ALL")
+        {
+                <tr>
+                    <td colspan='12' style="text-align:center;font-weight:600">@ViewBag.To_Party </td>
+                </tr>
+        }
+                <tr>
+                    <th class="tblock">To Party </th>
+                    <th class="tblock">Total Wgt </th>
+                    <th class="tblock">Total Truck </th>
+                </tr>
+            @foreach (var gitem in Model.GroupBy(x => new { x.Supplier_Id, Supplier = x.Company2.Name }))
+            {
+                <tr>
+                    <th class="grpblock">@gitem.Key.Supplier</th>
+                    <th colspan="2" class="tblank"></th>
+                </tr>
+
+                if (Request["group"] == "none")
+                {
+                    foreach (var pitem in Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id).GroupBy(x => new { x.Company_Id, x.Company.Name }).Select(x => new { Name = x.Key.Name, Weight = x.Sum(y => y.Weight), Count = x.Count() }).OrderBy(x => x.Name).ToArray())
+                    {
+                            <tr>
+                                <td >@pitem.Name</td>
+                                <td style="text-align:right">@pitem.Weight</td>
+                                <td style="text-align:right">@pitem.Count</td>
+                            </tr>
+                    }
+                }
+                else if (Request["group"] == "supmat")
+                {
+                    foreach (var pitem in Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id).GroupBy(x => new { x.Product_Id, x.Product.Name }).Select(x => new { Name = x.Key.Name, Weight = x.Sum(y => y.Weight), Count = x.Count() }).ToArray())
+                    {
+                            <tr>
+                                <td>@pitem.Name</td>
+                                <td style="text-align:right">@pitem.Weight</td>
+                                <td style="text-align:right">@pitem.Count</td>
+                            </tr>
+                    }
+
+                }
+                else if (Request["group"] == "supmatrec")
+                {
+                    {
+                        foreach (var pitem in gitem.GroupBy(y => new { y.Product_Id, y.Product.Name }))
+                        {
+                               <tr>
+                                    <th  class="grpblock2">@pitem.Key.Name </th>
+                                    <th colspan="2"  class="tblank"></th>
+                               </tr>
+
+                            foreach (var ritem in pitem.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id).GroupBy(x => new { x.Company_Id, x.Company.Name }).Select(x => new { pId = x.Key.Company_Id,Name = x.Key.Name, Weight = x.Sum(y => y.Weight), Count = x.Count() }).ToArray())
+                            {
+                                    <tr>
+                                        <td >@ritem.Name</td>
+                                        <td style="text-align:right">@ritem.Weight</td>
+                                        <td style="text-align:right">@ritem.Count</td>
+                                    </tr>
+                            }
+                        <tr>
+                            <th style="text-align:right"> TOTAL [Material Wise]</th>
+                            <th style="text-align:right">@Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id && x.Product_Id == pitem.Key.Product_Id).Sum(x => x.Weight) (M.T.)</th>
+                            <th style="text-align:right">@Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id && x.Product_Id == pitem.Key.Product_Id).Count()</th>
+                        </tr> 
+                        }
+
+                    }
+
+                }
+                else if (Request["group"] == "suprec")
+                {
+                    {
+                        foreach (var pitem in Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id).GroupBy(x => new { x.Company_Id, x.Company.Name }).Select(x => new { Name = x.Key.Name, Weight = x.Sum(y => y.Weight), Count = x.Count() }).OrderBy(x => x.Name).ToArray())
+                        {
+                            <tr>
+                                <td>@pitem.Name</td>
+                                <td style="text-align:right">@pitem.Weight</td>
+                                <td style="text-align:right">@pitem.Count</td>
+                            </tr>
+                        }
+
+                    }
+
+                }
+                else if (Request["group"] == "suprecmat")
+                {
+                    foreach (var ritem in gitem.GroupBy(y => new { y.Company, y.Company.Name }))
+                    {
+                        <tr>
+                            <th class="grpblock2">@ritem.Key.Name</th>
+                            <th colspan="2"  class="tblank"></th>
+                        </tr>
+                        foreach (var pitem in ritem.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id).GroupBy(x => new { x.Product_Id, x.Product.Name }).Select(x => new { Name = x.Key.Name, Weight = x.Sum(y => y.Weight), Count = x.Count() }).OrderBy(x => x.Name).ToArray())
+                        {
+                            <tr>
+                                <td>@pitem.Name</td>
+                                <td style="text-align:right">@pitem.Weight </td>
+                                <td style="text-align:right">@pitem.Count</td>
+                            </tr>
+                        }
+                    }
+                }
+                
+                <tr>
+                    <th style="text-align:right"> TOTAL [Supplier Wise]</th>
+                    <th style="text-align:right">@Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id).Sum(x => x.Weight) (M.T.)</th>
+                    <th style="text-align:right">@Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id).Count()</th>
+                </tr> 
+            }
+                <tr>
+                    <th colspan="3" class="tblank">&nbsp;</th>
+                </tr>
+                <tr>
+                    <th colspan="3" class="grpblock2" style="text-align:center">SUMMARY</th>
+                </tr>
+                <tr>
+                    <th style="text-align:center">TOTAL WEIGHT(M.T)-<b>@Model.Sum(x => x.Weight)</b></th>
+                    <th style="text-align:center" colspan="2">Total No of Trucks- <b>@Model.Count()</b></th>
+                </tr>
+        </table>
+        <br />
+    </div>
+</div>

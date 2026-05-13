@@ -1,0 +1,88 @@
+﻿@model IEnumerable<Transport.Models.Invoice>
+
+@{
+    ViewBag.Title = "Transport Freight Detail";
+    Layout = null;
+}
+<link href="~/Content/report.css" rel="stylesheet" />
+<link href="~/Content/bootstrap.css" rel="stylesheet" />
+<div class="main-1">
+    <div class="container">
+
+        <table class="table-condensed" style="width:100%;">
+                <tr>
+                    <td colspan='2' class="tblock" style="text-align:left;font-size:12px">Branch:- @ViewBag.Branch </td>
+                    <th colspan='4' class="tblock"><b>Transport Freight Detail</b></th>
+                    <td colspan='2' class="tblock" >Print Date @DateTime.Now.Date.ToString("dd-MMM-yyyy")</td>
+                </tr>
+                <tr>
+                    <td colspan='8' style="text-align:center;font-size:14px;font-weight:bold">@ViewBag.From_Party</td>
+                </tr>
+                <tr>
+                    <td colspan='8' style="text-align:center;border:1px solid #ccc"><span style="border:1px solid #ccc;padding:5px;border-radius:2px">@ViewBag.From_Date TO @ViewBag.To_Date</span></td>
+                </tr>
+                @if(@ViewBag.To_Party != "ALL")
+                {
+                    <tr>
+                        <td colspan='8' style="text-align:center;font-weight:600">@ViewBag.To_Party </td>
+                    </tr>
+                }
+            @foreach (var sitem in Model.GroupBy(x => new { x.Transport_Id, Transport = x.Company1.Name }))
+            {
+             <tr ><td colspan='8' class="grpblock">Transport : @sitem.Key.Transport</td></tr>
+                <tr>
+                    <th class="tblank">SNo</th>
+                    <th class="tblank" style="width:100px">Date</th>
+                    <th class="tblank">Bilty </th>
+                    <th class="tblank">Supplier </th>
+                    <th class="tblank">Truck No </th>
+                    <th class="tblank">Weight </th>
+                    <th class="tblank">Frieght Rate  </th>
+                    <th class="tblank">Frieght Amt  </th>
+                </tr>
+            
+                foreach (var gitem in Model.Where(x => x.Transport_Id == sitem.Key.Transport_Id).GroupBy(x => x.Company_Id).Select(x => new { x.Key, Weight = x.Sum(y => y.Weight), Freight = x.Sum(y => y.Freight) }))
+                {
+                <tr>
+                    <th colspan="2" class="grpblock2">To Party</th>
+                    <th colspan="6" class="grpblock2">@Model.Where(x => x.Transport_Id == sitem.Key.Transport_Id && x.Company_Id == gitem.Key).FirstOrDefault().Company.Name</th>
+                </tr>
+                    int I = 1;
+                    foreach (var pitem in Model.Where(x => x.Transport_Id == sitem.Key.Transport_Id && x.Company_Id == gitem.Key).GroupBy(x => new { x.Product_Id, x.Product.Name }).Select(x => new { Product_Id = x.Key.Product_Id, Name = x.Key.Name, Weight = x.Sum(y => y.Weight), Freight = x.Sum(y => y.Freight) }).ToArray())
+                    {
+                    <tr>
+                        <th colspan="4" style="background-color:#D8BDED">@pitem.Name</th>
+                        <th colspan="4" class="tblank">&nbsp;</th>
+                    </tr>
+                        foreach (var item in Model.Where(x => x.Transport_Id == sitem.Key.Transport_Id && x.Company_Id == gitem.Key && x.Product_Id == pitem.Product_Id).ToArray())
+                        {
+                    <tr>
+                        <td>@(I++)</td>
+                        <td style="width:100px">@item.Invoice_Date.ToString("dd-MMM-yyyy")</td>
+                        <td>@item.Billty_No</td>
+                        <td>@item.Company2.Name</td>
+                        <td>@item.Truck_No</td>
+                        <td style="text-align: right;">@item.Weight</td>
+                        <td style="text-align: right;">@item.Freight_Rate</td>
+                        <td style="text-align: right;">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}",@item.Freight)</td>
+                    </tr>
+                        }
+                    <tr>
+                        <th colspan='5' style="text-align: right;background-color:#D8BDED" >Material Wise Total :</th>
+                        <th style="text-align: right;">@pitem.Weight</th>
+                        <th></th>
+                        <th style="text-align: right;">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}",@pitem.Freight)</th>
+                    </tr>
+                    }
+                    <tr>
+                        <th colspan='5' style="text-align: right" class="tblank">Party wise Total :</th>
+                        <th style="text-align: right;" class="tblank">@gitem.Weight</th>
+                        <th class="tblank"></th>
+                        <th style="text-align: right;" class="tblank">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}",@gitem.Freight)</th>
+                    </tr>
+                }
+            }
+        
+
+    </div>
+</div>

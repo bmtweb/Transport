@@ -1,0 +1,116 @@
+﻿@model Transport.Models.Transaction
+
+@{
+    ViewBag.Title = "Add/Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    $(document).ready(function () {
+        $(".Date").datepicker({ dateFormat: 'dd/M/yy' });
+    });
+</script>
+<div class="main-1">
+    <div class="container">
+        <ul class="breadcrumb">
+            <li><a href="#">Opening Balance</a></li>
+            <li><a href="#">Party by supplier</a></li>
+            <li><a href="#">Add/Edit</a></li>
+        </ul>
+        @using (Html.BeginForm())
+        {
+            @Html.ValidationSummary(true)
+            <div class="form-horizontal">
+                <fieldset>
+                    <legend>Add/Edit</legend>
+                    <div class="row form-horizontal">
+                        <div class="form-group">
+                            <div class="col-md-6">
+                                <div class="col-md-12">
+                                    @Html.Label("Voucher Date", new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-12">
+                                    @Html.TextBoxFor(m => m.Voucher_Date, Model.Voucher_Date.ToString("dd/MMM/yyyy"), new { @class = "form-control Date" })
+                                    @Html.ValidationMessageFor(m => m.Voucher_Date)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row form-horizontal">
+                        <div class="form-group">
+                            <div class="col-xs-12">
+                                <div class="col-xs-6">
+                                    @Html.HiddenFor(model => model.Id)
+                                    @Html.LabelFor(model => model.Cr_Account_Id, new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.LabelFor(model => model.Dr_Account_Id, new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.DropDownListFor(model => model.Cr_Account_Id, ((SelectList)ViewBag.Companies), new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.Cr_Account_Id)
+                                </div>
+                                <div class="col-xs-6">
+                                   @Html.DropDownListFor(model => model.Dr_Account_Id, ((SelectList)ViewBag.Receipant),"Select Receipant", new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.Dr_Account_Id)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="row form-horizontal">
+                        <div class="form-group">
+                            <div class="col-xs-12">
+                                <div class="col-xs-6">
+                                    @Html.Label("Bill Opening Amt", new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.LabelFor(model => model.DrCr, new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.TextBoxFor(model => model.Amount1, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.Amount1)
+                                </div>
+                                <div class="col-xs-6">
+                                     <select id="DrCr" name="DrCr" class="form-control">
+                                        <option value="Dr">Dr</option>
+                                        <option value="Cr">Cr</option>
+                                    </select>
+                                    @Html.ValidationMessageFor(model => model.DrCr)
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    
+
+                </fieldset>
+            </div>
+            <div class="form-horizontal">
+                <div class="btn-group">
+                    <input type="submit" value="@(Model.Id == 0 ? "Save" : "Update")" class="btn btn-info">
+                </div>
+                <div class="btn-group">
+                    @{
+                        if (Model.Id > 0)
+                        {
+                        <a href="/trans/partybytrasporterdelete/@Model.Id" class="btn btn-success btn-small" onclick="return confirm('Are you sure to delete this record');" >Delete</a>
+                        }
+                        @Html.ActionLink("Back", "partybytrasporters","trans",null, new { @class = "btn btn-warning btn-small" })
+                            
+                    }
+
+                </div>
+                <br />
+                <br />
+                <br />
+                <br />
+            </div>
+        }
+
+    </div>
+</div>
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

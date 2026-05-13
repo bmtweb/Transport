@@ -1,0 +1,101 @@
+﻿@model IEnumerable<Transport.Models.Transaction>
+
+@{
+    ViewBag.Title = "Ledger Account";
+    Layout = null;
+}
+
+<div class="main-1">
+    <div class="container">
+        <table class="table-condensed" >
+            <thead>
+                <tr>
+                    <th colspan='6' style="text-align: center"><b>Ledger Account
+                    </b></th>
+                </tr>
+                <tr>
+                    <td colspan='6'></td>
+                </tr>
+                <tr>
+                    <td  colspan="6" align="center"><b>From :</b> @ViewBag.From_Date <b>  To:</b> To :@ViewBag.To_Date</td>
+                </tr>
+                <tr>
+                    <th>To :</th>
+                    <td>@ViewBag.From_Party</td>
+                    <td colspan='4'>@ViewBag.To_Party</td>
+                </tr>
+                <tr>
+                    <td colspan='6'></td>
+                </tr>
+                <tr>
+                    <th style="text-align:left;">S.NO</th>
+                    <th style="text-align:left;">Date</th>
+                    <th style="text-align:left;">Particular</th>
+                    <th style="text-align:left;">VType</th>
+                    <th style="text-align:left;">V.No.</th>
+                    <th style="text-align:right;">Debit</th>
+                    <th style="text-align:right;">Credit</th>
+                </tr>
+            </thead>
+            @{
+                int I = 1;
+                foreach (var item in Model.ToArray())
+                {
+                <tr>
+
+                    <td style="text-align:left;">@(I++)</td>
+                    <td style="text-align:left;">@item.Voucher_Date.ToString("dd/MMM/yyyy")</td>
+                    @if (item.Particular == "Sales" || item.Particular == "frieght")
+                    {
+                        <td style="text-align:left;">To @item.ProdName</td>
+                    }
+                    else
+                    {
+                        <td style="text-align:left;">@item.Particular</td>
+                    }
+                    @if (item.DrCr == "Dr")
+                    {
+                        <td style="text-align:right;"><i>Sales</i></td>
+                    }
+                    else
+                    {
+                        <td style="text-align:right;"><i>Receipt</i></td>
+                    }
+
+                    <td style="text-align:left;">@item.Voucher_No</td>
+                    @if (item.DrCr == "Dr")
+                    {
+                        <td style="text-align:right;">@item.Amount1</td>
+                        <td style="text-align:right;"></td>
+                    }
+                    else
+                    {
+                        <td style="text-align:right;"></td>
+                        <td style="text-align:right;">@item.Amount1</td>
+                    }
+                </tr>
+                }
+            }
+            <tr>
+                <th colspan='4'>Total (Rs)</th>
+                <th style="text-align:right;">@Model.Where(x => x.DrCr == "Dr").Sum(x => x.Amount1)</th>
+                <th style="text-align:right;">@Model.Where(y => y.DrCr == "Cr").Sum(y => y.Amount1)</th>
+            </tr>
+            <tr>
+                <th colspan='4'>By Closing Balance ::</th>
+                <th></th>
+                <th style="text-align:right;">@(Model.Where(x => x.DrCr == "Dr").Sum(x => x.Amount1) - Model.Where(x => x.DrCr == "Cr").Sum(x => x.Amount1))</th>
+            </tr>
+            <tr style="border-top:1px">
+                <th colspan='3'>Total Balance Amount::</th>
+                <th>@Model.Where(x => x.DrCr == "Dr").Sum(x => x.Amount1)</th>
+                <th style="text-align:right;">@(Model.Where(y => y.DrCr == "Cr").Sum(y => y.Amount1) + (Model.Where(x => x.DrCr == "Dr").Sum(x => x.Amount1) - Model.Where(x => x.DrCr == "Cr").Sum(x => x.Amount1)))</th>
+            </tr>
+            <tr>
+                <th colspan='2'>C/B In Words::</th>
+                <th colspan='3' style="text-align:right">@((new Transport.Converter.IndiaCurrencyConverter()).ConvertToWord((Model.Where(x => x.DrCr == "Dr").Sum(x => x.Amount1) - Model.Where(x => x.DrCr == "Cr").Sum(x => x.Amount1)).ToString("##"),null))</th>
+                <th></th>
+            </tr>
+        </table>
+    </div>
+</div>

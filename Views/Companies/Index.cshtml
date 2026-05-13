@@ -1,0 +1,116 @@
+﻿@model PagedList.IPagedList<Transport.Models.Company>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script type="text/javascript">
+    $(document).ready(function () {
+        if ($('#divmsg').html().trim().length > 0) {
+            $('#divmsg').dialog();
+        }
+        else 
+        {
+            $('#divmsg').hide();
+        }
+    })
+</script>
+<div class="main-1">
+    <div class="container">
+            <div class="has-warning" id="divmsg" title="Message">
+            @TempData["message"]
+        </div>
+
+        <ul class="breadcrumb">
+            <li><a href="#">Master</a></li>
+            <li><a href="#">Company</a></li>
+        </ul>
+@*
+        <div id="divmsg" class="alert alert-success alert-dismissable">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <strong>  @TempData["message"] </strong>
+            </div>*@
+
+       
+         @using (Html.BeginForm())
+        {  
+         <div class="btn-group">
+            @Html.ActionLink("Add New Company", "company", new { id = 0 }, new { @class = "btn btn-info btn-small" })
+         </div>
+         <div class="btn-group" style="float:right">
+            <label class="btn btn-info" style="background-color:ActiveCaption;color:White">Select Company Type</label>
+            @Html.DropDownList("ddlType", ((SelectList)ViewBag.ComType), new { @class = "btn" })
+            <input type="submit" value="Show" class="btn btn-info btn-small"/>
+         </div>
+            <div class="row form-horizontal">
+                <div class="form-group">
+                    <table class="table table-condensed" style="width:95%;margin-top:10px">
+                        <tr>
+                            <th class="tblock">
+                                <div class="col-xs-12">
+                                    <div class="col-md-3">Company Name
+                                       @* <div class="col-md-2">Unit Name</div>*@
+                                    </div>
+                                    <div class="col-md-3">Address</div>
+                                    <div class="col-md-6">
+                                        <div class="col-xs-2">City</div>
+                                        <div class="col-xs-3">State</div>
+                                        <div class="col-xs-2">Zip</div>
+                                        <div class="col-xs-1">Action</div>
+                                        <div class="col-xs-1">Status</div>
+                                    </div>
+                                </div>
+                            </th>
+                        </tr>
+
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="col-xs-12">
+                                        <div class="col-md-3">
+                                            @item.Name
+                                           @* <div class="col-md-6">@item.Unit_Name</div>*@
+                                        </div>
+                                        <div class="col-md-3">
+                                            @item.Address
+
+                                        </div>
+                                        <div class="col-md-5">
+                                            <div class="col-xs-3" style="text-align:center">@item.City</div>
+                                            <div class="col-xs-3" style="text-align:center">@item.State</div>
+                                            <div class="col-xs-3" style="text-align:center">@item.Zip</div>
+                                            <div class="col-xs-1">
+@*                                            @Html.ActionLink("Edit", "company", new { id = item.Id })</div>
+*@                                            <a href="@Url.Action("Company", "companies", new { id = item.Id })" title="Click to Edit">
+                                                <img src="@Url.Content("~/Content/images/edit.png")"  alt="EDIT"/>
+                                              </a>
+                                            </div>
+                                                @{ bool yourBooleanFlag = bool.Parse(@item.Status.ToString()); }
+
+                                                @if (yourBooleanFlag)
+                                                {
+                                                <div class="col-xs-1"><span class="label label-success">Active</span></div>
+                                                }
+                                                else
+                                                { 
+                                                <div class="col-xs-1"><span class="label label-danger">Inactive</span></div>
+                                                }
+                                        </div>
+                                    </div>
+                                    </td>
+                            </tr>
+                        }
+                          <tr><td style="background-color:#49607C" colspan="6"></td></tr>
+                    </table>
+                </div>
+            </div>
+            <div>
+                Page  @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+                @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
+            </div>
+        }
+        <br />
+        <br />
+    </div>
+</div>

@@ -1,0 +1,68 @@
+﻿@model IEnumerable<Transport.Models.Invoice>
+@{
+    ViewBag.Title = "TDS Tax Summary";
+}
+
+<link href="~/Content/bootstrap.css" rel="stylesheet" />
+<link href="~/Content/report.css" rel="stylesheet" />
+<div class="main-1">
+    <div class="container">
+        <table class="table-condensed" style="width:100%">
+            <thead style="border:0px solid">
+                    <tr>
+                        <td colspan='2' class="tblock" style="text-align:left;font-size:12px">Branch:- @ViewBag.Branch </td>
+                        <th colspan='6' class="tblock"><b>TDS Tax Summary</b></th>
+                        <td  class="tblock" style="text-align:right;font-size:12px">Print Date:- @DateTime.Now.Date.ToString("dd-MMM-yyyy")</td>
+                    </tr>
+                    <tr>
+                        <td colspan='9' style="text-align:center;font-size:19px;font-weight:bold">@ViewBag.From_Party</td>
+                    </tr>
+                    <tr>
+                        <td colspan='9' style="text-align:center;height:40px;background-color:white"><span style="border:1px solid #ccc;padding:5px;border-radius:2px">As on Date:- @ViewBag.From_Date  </span></td>
+                    </tr>
+            </thead>
+            <tr>
+                <th class="tblock">SNo </th>
+                <th class="tblock">Bilty No </th>
+                <th class="tblock" style="width:100px">Date </th>
+                <th class="tblock">Truck No</th>
+                <th class="tblock">Owner Name</th>
+                <th class="tblock">Pan Card No</th>
+                <th class="tblock">Freight Amt</th>
+                <th class="tblock">TDS(%)</th>
+                <th class="tblock">TDS Amt</th>
+            </tr>
+            @foreach (var gitem in Model.GroupBy(x => new { x.Transport_Id, Transporter = x.Company1.Name }))
+            {
+                <tr>
+                    <th  colspan="9" class="grpblock">@gitem.Key.Transporter</th>
+                </tr>
+                int I = 1;
+                foreach (var pitem in Model.ToArray())
+                {
+                <tr>
+                    <td>@(I++)</td>
+                    <td>@pitem.Billty_No </td>
+                    <td>@pitem.Invoice_Date.ToString("dd-MMM-yyyy") </td>
+                    <td>@pitem.Truck_No  </td>
+                    <td>@pitem.Owner_Name</td>
+                    <td>@pitem.Pan_Card</td>
+                    <td style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}",(pitem.Weight * pitem.Freight_Rate))</td>
+                    <td style="text-align:center">@(pitem.TDS_Tax ?? 0)  </td>
+                    <td style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}",((pitem.Weight * pitem.Freight_Rate * pitem.TDS_Tax) / 100))</td>
+                </tr>
+                }
+                <tr>
+                    <th colspan ="6">TOTAL </th>
+                    <td style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}",Model.Sum(x => (x.Weight * x.Freight_Rate)))</td>
+                    <td>&nbsp;</td>
+                    <td style="text-align:right"><b>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}",Model.Sum(x => ((x.Weight * x.Freight_Rate * x.TDS_Tax) / 100)))</b></td>
+                </tr>
+            }
+            <tr>
+                <td colspan="9" class="grpblock"></td>
+            </tr>
+        </table>
+        <br />
+    </div>
+</div>

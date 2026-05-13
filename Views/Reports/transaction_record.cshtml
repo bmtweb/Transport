@@ -1,0 +1,78 @@
+﻿@model IEnumerable<Transport.Models.Invoice>
+
+@{
+    ViewBag.Title = "Transport Transaction Detail";
+    Layout = null;
+}
+<link href="~/Content/report.css" rel="stylesheet" />
+<link href="~/Content/bootstrap.css" rel="stylesheet" />
+<div class="main-1">
+    <div class="container">
+        <table class="table-condensed" style="width: 100%;">
+                <tr>
+                    <td colspan='3' class="tblock" style="text-align:left;font-size:12px">Branch:- @ViewBag.Branch </td>
+                    <th colspan='5' class="tblock"><b>Transport Transaction Detail</b></th>
+                    <td colspan='3' class="tblock" >Print Date @DateTime.Now.Date.ToString("dd-MMM-yyyy")</td>
+                </tr>
+                <tr>
+                    <td colspan='11' style="text-align:center;font-size:14px;font-weight:bold">@ViewBag.From_Party</td>
+                </tr>
+                <tr>
+                    <td colspan='11' style="text-align:center;border:1px solid #ccc"><span style="border:1px solid #ccc;padding:5px;border-radius:2px">@ViewBag.From_Date TO @ViewBag.To_Date</span></td>
+                </tr>
+                @if(@ViewBag.To_Party != "ALL")
+                {
+                    <tr>
+                        <td colspan='11' style="text-align:center;font-weight:600">@ViewBag.To_Party </td>
+                    </tr>
+                }
+            @foreach (var gitem in Model.GroupBy(x => new { x.Transport_Id, Supplier = x.Company1.Name }))
+            {
+                <tr>
+                    <th colspan="13" class="grpblock2">@gitem.Key.Supplier</th>
+                </tr>
+                <tr>
+                    <th style="text-align:center">SNo</th>
+                    <th style="text-align:center">Bilty </th>
+                    <th style="text-align:center">Date</th>
+                    <th style="text-align:center">Supplier </th>
+                    <th style="text-align:center">Recipient </th>
+                    <th style="text-align:center">Truck </th>
+                    <th>Weight </th>
+                    <th>CD1</th>
+                    <th>Frg Amt </th>
+                    <th>Advance </th>
+                    <th>Due Amt</th>
+                </tr>
+            
+                int I = 1;
+                foreach (var item in Model.Where(x => x.Transport_Id == gitem.Key.Transport_Id).ToArray())
+                {
+                <tr>
+                    <td>@(I++)</td>
+                    <td>@item.Billty_No</td>
+                    <td>@item.Invoice_Date.ToString("dd-MMM-yyyy")</td>
+                    <td>@item.Company2.Name</td>
+                    <td>@item.Company.Name</td>
+                    <td>@item.Truck_No</td>
+                    <td>@item.Weight</td>
+                    <td>@item.Code_1</td>
+                    <td>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}",@item.Deposit_Amount)</td>
+                    <td>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}",@item.Advance)</td>
+                    <td>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}",(Math.Round((item.Deposit_Amount??0 - item.Advance ??0), 0)))</td>
+                </tr>
+                }
+                <tr>
+                    <th colspan='6' style="text-align: right">Total</th>
+                    <th>@Model.Where(x => x.Transport_Id == gitem.Key.Transport_Id).Sum(x => x.Weight)</th>
+                    <th></th>
+                    <th>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}",Model.Where(x => x.Transport_Id == gitem.Key.Transport_Id).Sum(x => x.Deposit_Amount))</th>
+                    <th>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}",@Model.Where(x => x.Transport_Id == gitem.Key.Transport_Id).Sum(x => x.Advance))</th>
+                    <th>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}",Math.Round(Model.Where(x => x.Transport_Id == gitem.Key.Transport_Id).Sum(item => (item.Deposit_Amount??0 - item.Advance??0)), 0))</th>
+                </tr>
+                 <tr>
+            </tr>
+            }
+        </table>
+    </div>
+</div>

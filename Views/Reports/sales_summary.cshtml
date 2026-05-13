@@ -1,0 +1,508 @@
+﻿@model IEnumerable<Transport.Models.Invoice>
+
+@{
+    ViewBag.Title = "Total Sales Summary";
+    Layout = null;
+}
+<link href="~/Content/report.css" rel="stylesheet" />
+<link href="~/Content/bootstrap.css" rel="stylesheet" />
+
+<div class="main-1">
+    <div class="container">
+
+        <table class="table-condensed" style="width:100%">
+            @{
+                if (ViewBag.RateApplied == "0")
+                {
+                <tr>
+                    <th colspan='7' class="tblock"><b>TOTAL SALES SUMMARY</b></th>
+                </tr>
+                <tr>
+                    <td colspan='7' style="text-align:center;font-size:14px;font-weight:bold">@ViewBag.From_Party</td>
+                </tr>
+                <tr>
+                    <td colspan='7' style="text-align:center;"><span style="border:1px solid #ccc;padding:5px;border-radius:2px">Date :@ViewBag.From_Date - @ViewBag.To_Date</span></td>
+                </tr>
+                <tr>
+                    <td colspan='7' style="text-align:center;font-weight:600">@ViewBag.To_Party </td>
+                </tr>
+
+                }
+                else if (ViewBag.RateApplied == "1")
+                {
+                <tr>
+                    <th colspan='6' class="tblock"><b>TOTAL SALES SUMMARY</b></th>
+                </tr>
+                <tr>
+                    <td colspan='6' style="text-align:center;font-size:14px;font-weight:bold">@ViewBag.From_Party</td>
+                </tr>
+                <tr>
+                    <td colspan='6' style="text-align:center;"><span style="border:1px solid #ccc;padding:5px;border-radius:2px">Date :@ViewBag.From_Date - @ViewBag.To_Date</span></td>
+                </tr>
+                <tr>
+                    <td colspan='6' style="text-align:center;font-weight:600">@ViewBag.To_Party </td>
+                </tr>
+                }
+                else if (ViewBag.RateApplied == "2")
+                {
+                <tr>
+                    <th colspan='4' class="tblock"><b>TOTAL SALES SUMMARY</b></th>
+                </tr>
+                <tr>
+                    <td colspan='4' style="text-align:center;font-size:14px;font-weight:bold">@ViewBag.From_Party</td>
+                </tr>
+                <tr>
+                    <td colspan='4' style="text-align:center;"><span style="border:1px solid #ccc;padding:5px;border-radius:2px">Date :@ViewBag.From_Date - @ViewBag.To_Date</span></td>
+                </tr>
+                <tr>
+                    <td colspan='4' style="text-align:center;font-weight:600">@ViewBag.To_Party </td>
+                </tr>
+                }
+            }
+               @{
+                   if (ViewBag.RateApplied == "0")
+                   {
+                    <tr>
+                        <th class="tblock">To Party </th>
+                        <th class="tblock">Weight </th>
+                        <th class="tblock">Amount(B) </th>
+                        <th class="tblock">Tax </th>
+                        <th class="tblock">Total Amt(B) </th>
+                        <th class="tblock">Total Amt(C) </th>
+                        <th class="tblock">Grand Total </th>
+                    </tr>
+                   }
+                   else if (ViewBag.RateApplied == "1")
+                   {
+                    <tr>
+                        <th class="tblock">To Party </th>
+                        <th class="tblock">Weight </th>
+                        <th class="tblock">Amount </th>
+                        <th class="tblock">Tax </th>
+                        <th class="tblock">Total Amount </th>
+                        <th class="tblock">Gross Rate</th>
+                    </tr>
+                   }
+                   else if (ViewBag.RateApplied == "2")
+                   {
+                    <tr>
+                        <th class="tblock">To Party </th>
+                        <th class="tblock">Weight </th>
+                        <th class="tblock">Amount(C) </th>
+                        <th class="tblock">Gross Rate</th>
+                    </tr>
+                   }
+
+                   foreach (var gitem in Model.GroupBy(x => new { x.Supplier_Id, Supplier = x.Company2.Name }))
+                   {
+                       if (ViewBag.RateApplied == "0")
+                       {                       
+                        <tr>
+                            <th colspan="2" class="grpblock" style="font-size:12px">@gitem.Key.Supplier</th>
+                            <th colspan="5" class="blank">&nbsp;</th>
+                        </tr>                       
+                       }
+                       else if (ViewBag.RateApplied == "1")
+                       {
+                        <tr>
+                            <th  class="grpblock" style="font-size:12px">@gitem.Key.Supplier</th>
+                            <th colspan="5" class="tblank">&nbsp;</th>
+                        </tr>                       
+                       }
+                       else if (ViewBag.RateApplied == "2")
+                       {
+                        <tr>
+                            <th  class="grpblock" style="font-size:12px">@gitem.Key.Supplier</th>
+                            <th colspan="3" class="tblank">&nbsp;</th>
+                        </tr>                       
+                       }
+
+                       if (Request["group"] == "none")
+                       {
+                           {
+                               //foreach (var pitem in Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id).Select(x => new { Name = x.Company.Name, Weight = x.Weight, x.VAT_Amount, x.Invoice_Amount, Total_Amount = (x.Invoice_Amount + x.VAT_Amount) }).ToArray())
+                               foreach (var pitem in Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id).GroupBy(x => new { x.Company_Id, x.Company.Name }).Select(x => new { Name = x.Key.Name, Weight = x.Sum(y => y.Weight), Invoice_Amount = x.Sum(y => y.Invoice_Amount), VAT_Amount = x.Sum(y => y.VAT_Amount), Total_Amount = x.Sum(y => ((y.VAT_Amount) + (y.Invoice_Amount))), Cash_Amount = x.Sum(y => (y.Weight * y.C_Rate)) }).OrderBy(x => x.Name).ToArray())
+                               {
+                                   if (ViewBag.RateApplied == "0")
+                                   {
+                                    <tr>
+                                        <td>@pitem.Name</td>
+                                        <td>@pitem.Weight</td>
+                                        <td style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", pitem.Invoice_Amount)</td>
+                                        <td style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", pitem.VAT_Amount)</td>
+                                        <td style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", pitem.Total_Amount)</td>
+                                        <td style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", pitem.Cash_Amount == null ? 0 : pitem.Cash_Amount)</td>
+                                        <td style="text-align:right"><i>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", (pitem.Total_Amount + pitem.Cash_Amount))</i></td>
+                                    </tr>
+                                   }
+                                   else if (ViewBag.RateApplied == "1")
+                                   {
+                                        <tr>
+                                            <td>@pitem.Name</td>
+                                            <td>@pitem.Weight</td>
+                                            <td style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", pitem.Invoice_Amount)</td>
+                                            <td style="text-align:right">@pitem.VAT_Amount</td>
+                                            <td style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", pitem.Total_Amount)</td>
+                                            <td style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", (pitem.Total_Amount / pitem.Weight))</td>
+                                            <td class="tblank"></td>
+                                        </tr>
+                                   }
+                                   else if (ViewBag.RateApplied == "2")
+                                   {
+                                       
+                                         <tr>
+                                            <td>@pitem.Name</td>
+                                            <td>@pitem.Weight</td>
+                                            <td style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", pitem.Cash_Amount)</td>
+                                            <td style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", (pitem.Cash_Amount / pitem.Weight))</td>
+                                            <td class="tblank"></td>
+                                            <td class="tblank"></td>
+                                        </tr>
+                                   }
+                               }
+                           }
+                       }
+                       else if (Request["group"] == "supmat")
+                       {
+                           {
+                               foreach (var pitem in Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id).GroupBy(x => new { x.Product_Id, x.Product.Name }).Select(x => new { Name = x.Key.Name, Weight = x.Sum(y => y.Weight), Invoice_Amount = x.Sum(y => y.Invoice_Amount), VAT_Amount = x.Sum(y => y.VAT_Amount), Total_Amount = x.Sum(y => (y.VAT_Amount + y.Invoice_Amount)), Cash_Amount = x.Sum(y => (y.Weight * y.C_Rate)) }).ToArray())
+                               {
+
+                                   if (ViewBag.RateApplied == "0")
+                                   {
+                                    <tr>
+                                        <td>@pitem.Name</td>
+                                        <td>@pitem.Weight</td>
+                                        <td style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", pitem.Invoice_Amount)</td>
+                                        <td style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", pitem.VAT_Amount)</td>
+                                        <td style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", pitem.Total_Amount)</td>
+                                        <td style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", pitem.Cash_Amount)</td>
+                                        <td style="text-align:right">@(pitem.Total_Amount + pitem.Cash_Amount)</td>
+                                    </tr>
+                                   }
+                                   else if (ViewBag.RateApplied == "1")
+                                   {
+                                        <tr>
+                                            <td>@pitem.Name</td>
+                                            <td>@pitem.Weight</td>
+                                            <td style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", pitem.Invoice_Amount)</td>
+                                            <td style="text-align:right">@pitem.VAT_Amount</td>
+                                            <td style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", pitem.Total_Amount)</td>
+                                            <td style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", (pitem.Total_Amount / pitem.Weight))</td>
+                                            <td class="tblank"></td>
+                                        </tr>
+                                   }
+                                   else if (ViewBag.RateApplied == "2")
+                                   {
+                                        <tr>
+                                            <td>@pitem.Name</td>
+                                            <td>@pitem.Weight</td>
+                                            <td style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", pitem.Cash_Amount)</td>
+                                            <td style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", (pitem.Cash_Amount / pitem.Weight)))</td>
+                                            <td class="tblank"></td>
+                                            <td class="tblank"></td>
+                                        </tr>
+                                   }
+                               }
+                           }
+                       }
+                       else if (Request["group"] == "supmatrec")
+                       {
+                           foreach (var pitem in gitem.GroupBy(y => new { y.Product_Id, y.Product.Name }))
+                           {
+                                <tr>
+                                    <th colspan="7" class="grpblock">@pitem.Key.Name </th>
+                                </tr>
+                               //foreach (var sitem in Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id).GroupBy(x => new { x.Product_Id, x.Product.Name }).Select(x => new { Name = x.Key.Name, Weight = x.Sum(y => y.Weight), Invoice_Amount = x.Sum(y => y.Invoice_Amount), VAT_Amount = x.Sum(y => y.VAT_Amount), Total_Amount = x.Sum(y => (y.VAT_Amount + y.Invoice_Amount)), Cash_Amount = x.Sum(y => (y.Weight * y.C_Rate)) }).ToArray())
+                               foreach (var sitem in pitem.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id).GroupBy(x => new { x.Company, x.Company.Name }).Select(x => new { Name = x.Key.Name, Weight = x.Sum(y => y.Weight), Invoice_Amount = x.Sum(y => y.Invoice_Amount), VAT_Amount = x.Sum(y => y.VAT_Amount), Total_Amount = x.Sum(y => (y.VAT_Amount + y.Invoice_Amount)), Cash_Amount = x.Sum(y => (y.Weight * y.C_Rate)) }).OrderBy(x => x.Name).ToArray())
+                               {
+                                   if (ViewBag.RateApplied == "0")
+                                   {
+                                        <tr>
+                                            <td>@sitem.Name</td>
+                                            <td style="text-align:right" >@sitem.Weight</td>
+                                            <td style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Math.Round(Convert.ToDouble(sitem.Invoice_Amount), 0))</td>
+                                            <td style="text-align:right">@Math.Round(Convert.ToDouble(sitem.VAT_Amount), 0)</td>
+                                            <td style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Math.Round(Convert.ToDouble(sitem.Total_Amount), 0))</td>
+                                            <td style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Math.Round(Convert.ToDouble(sitem.Cash_Amount), 0))</td>
+                                            <td style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Math.Round(Convert.ToDouble(sitem.Total_Amount + sitem.Cash_Amount), 0))</td>
+                                        </tr>
+                                   }
+                                   else if (ViewBag.RateApplied == "1")
+                                   {
+                                       
+                                            <tr>
+                                            <td>@sitem.Name</td>
+                                            <td >@sitem.Weight</td>
+                                            <td style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Math.Round(Convert.ToDouble(sitem.Invoice_Amount), 0))</td>
+                                            <td style="text-align:right">@Math.Round(Convert.ToDouble(sitem.VAT_Amount), 0)</td>
+                                            <td style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Math.Round(Convert.ToDouble(sitem.Total_Amount), 0))</td>
+                                            <td style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Math.Round(Convert.ToDouble(sitem.Total_Amount / sitem.Weight), 0))</td>
+                                            <td class="tblank"></td>
+                                            </tr>
+                                   }
+                                   else if (ViewBag.RateApplied == "2")
+                                   {
+                                            <tr>
+                                                <td>@sitem.Name</td>
+                                                <td>@sitem.Weight</td>
+                                                <td>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Math.Round(Convert.ToDouble(sitem.Cash_Amount), 0))</td>
+                                                <td>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Math.Round(Convert.ToDouble(sitem.Cash_Amount / sitem.Weight), 0))</td>
+                                                <td class="tblank"></td>
+                                                <td class="tblank"></td>
+                                            </tr>
+                                   }
+                               }
+                               if (ViewBag.RateApplied == "0")
+                               {
+                                <tr >
+                                    <th class="tblank">Total (Material Wise)</th>
+                                    <th>@Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id && x.Product.Id == pitem.Key.Product_Id).Sum(x => x.Weight)</th>
+                                    <th style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id && x.Product.Id == pitem.Key.Product_Id).Sum(x => x.Invoice_Amount))</th>
+                                    <th style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id && x.Product.Id == pitem.Key.Product_Id).Sum(x => x.VAT_Amount))</th>
+                                    <th style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id && x.Product.Id == pitem.Key.Product_Id).Sum(x => (x.Invoice_Amount + x.VAT_Amount)))</th>
+                                    <th style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id && x.Product.Id == pitem.Key.Product_Id).Sum(x => (Math.Round(Convert.ToDouble(((x.Weight * x.C_Rate))), 0))))</th>
+                                    <th style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id && x.Product.Id == pitem.Key.Product_Id).Sum(x => (Math.Round(Convert.ToDouble((x.Invoice_Amount + x.VAT_Amount) + (x.Weight * x.C_Rate)), 0))))</th>
+                                </tr>    
+                                
+                                
+                               }
+                               else if (ViewBag.RateApplied == "1")
+                               {
+                                <tr >
+                                    <th class="tblank">Total (Material Wise)</th>
+                                    <th>@Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id && x.Product.Id == pitem.Key.Product_Id).Sum(x => x.Weight)</th>
+                                    <th style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id && x.Product.Id == pitem.Key.Product_Id).Sum(x => x.Invoice_Amount))</th>
+                                    <th style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id && x.Product.Id == pitem.Key.Product_Id).Sum(x => x.VAT_Amount))</th>
+                                    <th style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id && x.Product.Id == pitem.Key.Product_Id).Sum(x => (x.Invoice_Amount + x.VAT_Amount)))</th>
+                                    <th style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id && x.Product.Id == pitem.Key.Product_Id).Sum(x => (Math.Round(Convert.ToDouble(((x.Invoice_Amount + x.VAT_Amount))/x.Weight), 0))))</th>
+                                    <th style="text-align:right">&nbsp;</th>
+                                </tr>    
+
+                               }
+                               else if (ViewBag.RateApplied == "2")
+                               {
+                                <tr >
+                                    <th class="tblank">Total (Material Wise)</th>
+                                    <th>@Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id && x.Product.Id == pitem.Key.Product_Id).Sum(x => x.Weight)</th>
+                                    <th style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id && x.Product.Id == pitem.Key.Product_Id).Sum(x => x.Invoice_Amount))</th>
+                                    <th class="tblank"></th>
+                                    <th class="tblank"></th>                                
+                                    <th class="tblank"></th>
+                                    <th class="tblank"></th>                                
+                                    </tr>    
+
+                               }
+
+                           }
+
+                       }
+                       else if (Request["group"] == "suprec")
+                       {
+                           {
+                               foreach (var pitem in Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id).GroupBy(x => new { x.Company_Id, x.Company.Name }).Select(x => new { Name = x.Key.Name, Weight = x.Sum(y => y.Weight), Invoice_Amount = x.Sum(y => y.Invoice_Amount), VAT_Amount = x.Sum(y => y.VAT_Amount), Total_Amount = x.Sum(y => Math.Round(Convert.ToDouble(y.VAT_Amount + y.Invoice_Amount), 0)), Cash_Amount = x.Sum(y => Math.Round(Convert.ToDouble(y.Weight * y.C_Rate), 0)) }).ToArray())
+                               {
+                                   if (ViewBag.RateApplied == "0")
+                                   {
+                                    <tr>
+                                        <td>@pitem.Name</td>
+                                        <td>@pitem.Weight</td>
+                                        <td>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", pitem.Invoice_Amount)</td>
+                                        <td>@pitem.VAT_Amount</td>
+                                        <td>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", pitem.Total_Amount)</td>
+                                        <td>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", pitem.Cash_Amount)</td>
+                                        <td>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", (pitem.Total_Amount + pitem.Cash_Amount))</td>
+                                    </tr>
+                                   }
+                                   else if (ViewBag.RateApplied == "1")
+                                   {
+                                       
+                                        <tr>
+                                            <td>@pitem.Name</td>
+                                            <td>@pitem.Weight</td>
+                                            <td>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", pitem.Invoice_Amount)</td>
+                                            <td>@pitem.VAT_Amount</td>
+                                            <td>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", pitem.Total_Amount)</td>
+                                            <td>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Math.Round((Convert.ToDouble(pitem.Total_Amount) / Convert.ToDouble(pitem.Weight)), 0))</td>
+                                            <td class="tblank"></td>
+                                        </tr>
+                                   }
+                                   else if (ViewBag.RateApplied == "2")
+                                   {
+                                        <tr>
+                                            <td>@pitem.Name</td>
+                                            <td>@pitem.Weight</td>
+                                            <td>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", pitem.Cash_Amount)</td>
+                                            <td>@Math.Round((Convert.ToDouble(pitem.Cash_Amount) / Convert.ToDouble(pitem.Weight)), 0)</td>
+                                            <td class="tblank"></td>
+                                            <td class="tblank"></td>
+                                        </tr>
+                                   }
+
+                               }
+
+                           }
+                       }
+                       else if (Request["group"] == "suprecmat")
+                       {
+
+                           foreach (var ritem in gitem.GroupBy(y => new { y.Company, y.Company.Name }))
+                           {
+                                    <tr>
+                                        <th colspan="7" class="grpblock">@ritem.Key.Name</th>
+                                    </tr>
+                               //foreach (var pitem in Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id).GroupBy(x => new { x.Company_Id, x.Company.Name }).Select(x => new { Name = x.Key.Name, Weight = x.Sum(y => y.Weight), Invoice_Amount = x.Sum(y => y.Invoice_Amount), VAT_Amount = x.Sum(y => y.VAT_Amount), Total_Amount = x.Sum(y => (y.VAT_Amount + y.Invoice_Amount)), Cash_Amount = x.Sum(y => (y.Weight * y.C_Rate)) }).ToArray())
+                               foreach (var pitem in ritem.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id).GroupBy(x => new { x.Product_Id, x.Product.Name }).Select(x => new { Name = x.Key.Name, Weight = x.Sum(y => y.Weight), Invoice_Amount = x.Sum(y => y.Invoice_Amount), VAT_Amount = x.Sum(y => y.VAT_Amount), Total_Amount = x.Sum(y => (y.VAT_Amount + y.Invoice_Amount)), Cash_Amount = x.Sum(y => (y.Weight * y.C_Rate)) }).OrderBy(x => x.Name).ToArray())
+                               {
+                                   if (ViewBag.RateApplied == "0")
+                                   {
+                                    <tr>
+                                        <td>@pitem.Name</td>
+                                        <td>@pitem.Weight</td>
+                                        <td>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", pitem.Invoice_Amount)</td>
+                                        <td>@pitem.VAT_Amount</td>
+                                        <td>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", pitem.Total_Amount)</td>
+                                        <td>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", pitem.Cash_Amount)</td>
+                                        <td>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", (pitem.Total_Amount + pitem.Cash_Amount))</td>
+                                    </tr>
+                                   }
+                                   else if (ViewBag.RateApplied == "1")
+                                   {
+                                        <tr>
+                                            <td>@pitem.Name</td>
+                                            <td>@pitem.Weight</td>
+                                            <td>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", pitem.Invoice_Amount)</td>
+                                            <td>@pitem.VAT_Amount</td>
+                                            <td>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", pitem.Total_Amount)</td>
+                                            <td>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Math.Round(Convert.ToDouble(pitem.Total_Amount / pitem.Weight), 0))</td>
+                                            <td class="tblank"></td>
+                                        </tr>
+                                   }
+                                   else if (ViewBag.RateApplied == "2")
+                                   {
+                                        <tr>
+                                            <td>@pitem.Name</td>
+                                            <td>@pitem.Weight</td>
+                                            <td>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", pitem.Cash_Amount)</td>
+                                            <td>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Math.Round(Convert.ToDouble(pitem.Cash_Amount / pitem.Weight), 0))</td>
+                                            <td class="tblank"></td>
+                                            <td class="tblank"></td>
+                                        </tr>
+                                   }
+
+                               }
+                               
+                            <tr >
+                                <th class="tblank">Total (Party Wise)</th>
+                                <th>@Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id && x.Company.Id == ritem.Key.Company.Id).Sum(x => x.Weight)</th>
+                                <th style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id && x.Company.Id == ritem.Key.Company.Id).Sum(x => x.Invoice_Amount))</th>
+                                <th style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id && x.Company.Id == ritem.Key.Company.Id).Sum(x => x.VAT_Amount))</th>
+                                <th style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id && x.Company.Id == ritem.Key.Company.Id).Sum(x => (x.Invoice_Amount + x.VAT_Amount)))</th>
+                                <th style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id && x.Company.Id == ritem.Key.Company.Id).Sum(x => (Math.Round(Convert.ToDouble(x.Weight * x.C_Rate), 0))))</th>
+                                <th style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id && x.Company.Id == ritem.Key.Company.Id).Sum(x => (Math.Round(Convert.ToDouble((x.Invoice_Amount + x.VAT_Amount) + (x.Weight * x.C_Rate)), 0))))</th>
+                            </tr>
+
+
+
+                           }
+                       }
+
+                       if (ViewBag.RateApplied == "0")
+                       {
+                        <tr >
+                            <th class="tblank">Total (Supplier Wise)</th>
+                            <th>@Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id).Sum(x => x.Weight)</th>
+                            <th style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id).Sum(x => x.Invoice_Amount))</th>
+                            <th style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id).Sum(x => x.VAT_Amount))</th>
+                            <th style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id).Sum(x => (x.Invoice_Amount + x.VAT_Amount)))</th>
+                            <th style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id).Sum(x => (Math.Round(Convert.ToDouble(x.Weight * x.C_Rate), 0))))</th>
+                            <th style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id).Sum(x => (Math.Round(Convert.ToDouble((x.Invoice_Amount + x.VAT_Amount) + (x.Weight * x.C_Rate)), 0))))</th>
+                        </tr>
+                       }
+                       else if (ViewBag.RateApplied == "1")
+                       {
+                        <tr>
+                            <th class="tblank">Total (Supplier Wise)</th>
+                            <th>@Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id).Sum(x => x.Weight)</th>
+                            <th style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id).Sum(x => x.Invoice_Amount))</th>
+                            <th style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id).Sum(x => x.VAT_Amount))</th>
+                            <th style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id).Sum(x => (x.Invoice_Amount + x.VAT_Amount)))</th>
+                            <th >&nbsp;</th>
+                        </tr>
+                       }
+                       else if (ViewBag.RateApplied == "2")
+                       {
+                        <tr>
+                            <th class="tblank">Total (Supplier Wise)</th>
+                            <th>@Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id).Sum(x => x.Weight)</th>
+                            <th style="text-align:right">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Model.Where(x => x.Supplier_Id == gitem.Key.Supplier_Id).Sum(x => (Math.Round(Convert.ToDouble(x.Weight * x.C_Rate), 0))))</th>
+                            <th >&nbsp;</th>
+                        </tr>
+                       }
+                   }
+                   }
+        </table>
+        <br />
+            <table class="table-condensed" style="width: 100%;font-family:Calibri">
+                @if (ViewBag.RateApplied == "0")
+                {
+                <tr>
+                    <th colspan="7" style="text-align:center">SUMMARY</th>
+                </tr>
+                <tr>
+                    <th>TOTAL WEIGHT(M.T)</th>
+                    <td colspan="6"><b>@Model.Sum(x => x.Weight) (M.T.)</b></td>
+                </tr>
+                 <tr >
+                    <th style="background-color:Aqua">INV AMOUNT (B)</th>
+                    <td ><b>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Model.Sum(x => x.Invoice_Amount))</b>&nbsp; Rs.</td>
+                    <th style="background-color:Aqua">TOTAL VAT(Rs.)</th>
+                    <td ><b>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Model.Sum(x => x.VAT_Amount))</b> &nbsp; Rs.</td>
+                    <th style="background-color:Aqua">TOTAL INV AMT(Rs.)</th>
+                    <td ><b>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Model.Sum(x => (x.Invoice_Amount + x.VAT_Amount)))</b> &nbsp; Rs.</td>
+                </tr>
+                <tr>
+                    <th>INV AMOUNT(C)</th>
+                    <td colspan="6"><b>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Model.Sum(x => Math.Round(Convert.ToDouble(x.Weight * x.C_Rate), 0)))</b> &nbsp; Rs.</td>
+                </tr>
+                <tr>
+                    <th >GRAND TOTAL (B+C+VAT)</th>
+                    <td colspan="6"><b>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Model.Sum(x => Math.Round(Convert.ToDouble((x.Weight * x.C_Rate) + ((x.Invoice_Amount) + (x.VAT_Amount))), 0)))</b> &nbsp; Rs.</td>
+                </tr>
+                }
+                else if (ViewBag.RateApplied == "1")
+                {
+                <tr>
+                    <th colspan="6" style="text-align:center">SUMMARY</th>
+                </tr>
+                <tr>
+                    <th colspan="2">TOTAL WEIGHT(M.T)</th>
+                    <td><b>@Model.Sum(x => x.Weight)</b></td>
+                    <th colspan="2">INV AMOUNT (B)</th>
+                    <td><b>@Model.Sum(x => x.Invoice_Amount)</b></td>
+                </tr>
+                <tr>
+                    <th colspan="2">TOTAL VAT(Rs.)</th>
+                    <td><b>@Model.Sum(x => x.VAT_Amount)</b></td>
+                    <th colspan="2">TOTAL INV AMT(Rs.)</th>
+                    <td><b>@Model.Sum(x => (x.Invoice_Amount + x.VAT_Amount))</b></td>
+                </tr>
+                }
+                else if (ViewBag.RateApplied == "1")
+                {
+                <tr>
+                    <th colspan="4" style="text-align:center">SUMMARY</th>
+                </tr>
+                <tr>
+                    <th>TOTAL WEIGHT(M.T)</th>
+                    <td><b>@Model.Sum(x => x.Weight)</b></td>
+                    <th>TOTAL AMOUNT (C)</th>
+                    <td><b>@Model.Sum(x => x.Invoice_Amount)</b></td>
+                </tr>
+                }
+            </table>
+    <br />
+
+
+    </div>
+</div>

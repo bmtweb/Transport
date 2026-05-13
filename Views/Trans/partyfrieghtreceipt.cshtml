@@ -1,0 +1,134 @@
+﻿@model Transport.Models.Receipt
+
+@{
+    ViewBag.Title = "Add/Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    $(document).ready(function () {
+        $(".Date").datepicker({
+            minDate: '@(Convert.ToDateTime(Request.Cookies["FY"].Value.Split('-')[0]).ToString("dd/MMM/yyyy"))',
+            dateFormat: 'dd/M/yy',
+            maxDate: '@(Convert.ToDateTime(Request.Cookies["FY"].Value.Split('-')[1]).ToString("dd/MMM/yyyy"))'
+        });
+    });
+</script>
+<div class="main-1">
+    <div class="container">
+        <ul class="breadcrumb">
+            <li><a href="#">Accounts</a></li>
+            <li><a href="#">Frieght Receipt</a></li>
+            <li><a href="#">Add/Edit</a></li>
+        </ul>
+        @using (Html.BeginForm())
+        {
+            @Html.ValidationSummary(true)
+            <div class="form-horizontal">
+                <fieldset>
+                    <legend>Add/Edit</legend>
+                    <div class="row form-horizontal">
+                        <div class="form-group">
+                            <div class="col-md-6">
+                                <div class="col-md-12">
+                                    @Html.Label("Receipt Date", new { @class = "control-label" })
+                                </div>
+                                <div class="col-md-12">
+                                    @Html.TextBoxFor(m => m.Receipt_Date, Model.Receipt_Date.ToString("dd/MMM/yyyy"), new { @class = "form-control Date" })
+                                    @Html.ValidationMessageFor(m => m.Receipt_Date)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row form-horizontal">
+                        <div class="form-group">
+                            <div class="col-xs-12">
+                                <div class="col-xs-6">
+                                    @Html.HiddenFor(model => model.Id)
+                                    @Html.LabelFor(model => model.Cr_Account_Id, new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.LabelFor(model => model.Dr_Account_Id, new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.DropDownListFor(model => model.Cr_Account_Id, ((SelectList)ViewBag.Companies), new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.Cr_Account_Id)
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.DropDownListFor(model => model.Dr_Account_Id, ((SelectList)ViewBag.Receipant), "Select Receipant", new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.Dr_Account_Id)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row form-horizontal">
+                        <div class="form-group">
+                            <div class="col-xs-12">
+                                <div class="col-xs-6">
+                                    @Html.Label("Type", new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.LabelFor(model => model.Amount, new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.DropDownList("ddlType", ((SelectList)ViewBag.Types), new { @class = "form-control" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.TextBoxFor(model => model.Amount, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.Amount)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row form-horizontal">
+                        <div class="form-group">
+                            <div class="col-xs-12">
+                                <div class="col-xs-6">
+                                    @Html.LabelFor(model => model.Bank, new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.LabelFor(model => model.Cheque, new { @class = "control-label" })
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.TextBoxFor(model => model.Bank, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.Bank)
+                                </div>
+                                <div class="col-xs-6">
+                                    @Html.TextBoxFor(model => model.Cheque, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.Cheque)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </fieldset>
+            </div>
+            <div class="form-horizontal">
+                <div class="btn-group">
+                    <input type="submit" value="@(Model.Id == 0 ? "Save" : "Update")" class="btn btn-info">
+                </div>
+                <div class="btn-group">
+                    @{
+            if (Model.Id > 0)
+            {
+                        <a href="/trans/partyfrieghtreceiptdelete/@Model.Id" class="btn btn-success btn-small" onclick="return confirm('Are you sure to delete this record');" >Delete</a>
+            }
+                        @Html.ActionLink("Back", "partyfrieghtreceipts", "trans", null, new { @class = "btn btn-warning btn-small" })
+                            
+                    }
+
+                </div>
+                <br />
+                <br />
+                <br />
+                <br />
+            </div>
+        }
+
+    </div>
+</div>
+
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

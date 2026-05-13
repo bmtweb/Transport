@@ -1,0 +1,536 @@
+﻿@model Transport.Models.Invoice
+
+@{
+    ViewBag.Title = "Add/Edit Invoice";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.ValidationSummary(true)
+
+    <script type="text/javascript">
+        $('body').on('change', '.combo', function () {
+            var product_Id = $("#Product_Id").val();
+            var company_id = $("#Company_Id").val();
+            var transport_Id = $("#Transport_Id").val();
+            var supplier_Id = $("#Supplier_Id").val();
+            if (product_Id != "") {
+                $.getJSON("/Invoices/SelectCompany", { product_id: product_Id, company_id: company_id, transport_Id: transport_Id, supplier_Id: supplier_Id }, function (data) {
+                    if (data.status == "Success") {
+                        $("#Transport_Id").val(data.Transport_Id);
+                        $("#Supplier_Id").val(data.Supplier_Id);
+                        $("#B_Rate").val(data.B_Rate);
+                        $("#C_Rate").val(data.C_Rate);
+                        $("#From").val(data.From);
+                        $("#To").val(data.To);
+                        $("#From_City").val(data.From);
+                        $("#To_City").val(data.To);
+                        $("#Freight_Rate").val(data.FrieghtRate);
+                        $("#VAT_Rate").val(data.VAT);
+                        $("#Company_Id").val(data.Company_Id);
+                        calculate();
+                    }
+                    else {
+                        $("#Product_Id option").removeAttr("selected");
+                        alert(data.msg);
+                    }
+                });
+            }
+        });
+
+        $('body').on('change', '#Truck_No', function () {
+
+            var truck_no = $("#Truck_No").val();
+            $.getJSON("/Invoices/SelectPreStatus", { truck_no: truck_no }, function (data) {
+                if (data.status == "Success") {
+                    $("#Pan_Card").val(data.Pan_Card);
+                    $("#Owner_Name").val(data.Owner_Name);
+                    $("#TDS_Tax").val(data.TDS_Tax);
+                    if ($("#Pan_Card").val() != '')
+                        $('#Pan_Card').attr('readonly', true);
+                    else
+                        $('#Pan_Card').attr('readonly', false);
+
+                    if ($("#Owner_Name").val() != '')
+                        $('#Owner_Name').attr('readonly', true);
+                    else
+                        $('#Owner_Name').attr('readonly', false);
+
+                    if ($("#TDS_Tax").val() != '' && $("#TDS_Tax").val() != 0)
+                        $('#TDS_Tax').attr('readonly', true);
+                    else
+                        $('#TDS_Tax').attr('readonly', false);
+                }
+                else {
+                    $("#Pan_Card").val(' ');
+                    $("#Owner_Name").val(' ');
+                    $("#TDS_Tax").val('');
+                    $('#Owner_Name').attr('readonly', false);
+                    $('#Pan_Card').attr('readonly', false);
+                    $('#TDS_Tax').attr('readonly', false);
+                }
+            });
+        });
+
+        $('body').on('change', '#Code_1', function () {
+            calculate();
+        });
+
+        $('body').on('change', '.weight', function () {
+            calculate();
+        });
+
+
+        function calculate() {
+            var Weight = parseFloat($("#Weight").val());
+            var FrieghtRate = parseFloat($("#Freight_Rate").val());
+            var VAT = parseFloat($("#VAT_Rate").val());
+            var Rate = parseFloat($("#B_Rate").val());
+            var Code1 = parseInt($("#Code_1").val());
+            var Code2 = (FrieghtRate / 10) - Code1;
+
+            $(".Frg_Rate").html(FrieghtRate);
+            $(".Inv_Rate").html(Rate);
+            $(".Vat_Rate").html(VAT);
+            $(".Frg_Amt").html(Math.round((FrieghtRate * Weight)));
+            $(".Invoice").html(Math.round((Rate * Weight)));
+
+            // Vat Amount Calculation
+            VAT = Math.round(((VAT / 100) * (Rate * Weight)))
+            $(".VAT").html(VAT);
+
+            // Freight Amount Calculation
+            FrieghtRate = Math.round((FrieghtRate * Weight))
+            $("#Freight_Amount").val(FrieghtRate);
+            $("#Invoice_Amount").val(Math.round((Rate * Weight)));
+            $("#VAT_Amount").val(VAT);
+            $(".Freight").html(FrieghtRate);
+
+            if (Code1 > 0) {
+                $("#Code_2").val(Code2);
+                $("#Code_2_txt").val(Code2);
+            } else {
+                $("#Code_2").val(0);
+                $("#Code_2_txt").val(0);
+            }
+        }
+
+        $(document).ready(function () {
+            
+            $("#Invoice_Date").datepicker({
+                minDate: '@(Convert.ToDateTime(Request.Cookies["FY"].Value.Split('-')[0]).ToString("dd/MMM/yyyy"))',
+                dateFormat: 'dd/M/yy',
+                maxDate: '@(Convert.ToDateTime(Request.Cookies["FY"].Value.Split('-')[1]).ToString("dd/MMM/yyyy"))'
+            });
+            var invNo = parseInt($("#Code_1").val());
+            if (parseInt($("#Supplier_Id option").length) > 2 && invNo == 0) {
+                alert("Please Select a Supplier from list!");
+                $("#Supplier_Id option").focus();
+            }
+
+            function close_accordion_section() {
+                $('.accordion .accordion-section-title').removeClass('active');
+                $('.accordion .accordion-section-content').slideUp(300).removeClass('open');
+            }
+
+            $('.accordion-section-title').click(function (e) {
+                // Grab current anchor value
+                var currentAttrValue = $(this).attr('href');
+
+                if ($(e.target).is('.active')) {
+                    close_accordion_section();
+                } else {
+                    close_accordion_section();
+
+                    // Add active class to section title
+                    $(this).addClass('active');
+                    // Open up the hidden content panel
+                    $('.accordion ' + currentAttrValue).slideDown(300).addClass('open');
+                }
+
+                e.preventDefault();
+            });
+        });
+
+
+
+        $(document).on("keydown", "input", function (e) {
+            if (e.which == 13) e.preventDefault();
+        });
+
+        $(document).on("keydown", function (e) {
+            if (e.which === 8 && !$(e.target).is("input, textarea")) {
+                e.preventDefault();
+            }
+        });
+
+    </script>
+
+    <div class="main-1">
+        <div class="container">
+            <ul class="breadcrumb">
+                <li>Invoices >></li>
+                <li>Add/Edit Invoice</li>
+            </ul>
+            @Html.HiddenFor(x => x.Freight_Rate)
+            @Html.HiddenFor(x => x.VAT_Rate)
+            @Html.HiddenFor(x => x.Deposit_Amount)
+            @Html.HiddenFor(x => x.B_Rate)
+            @Html.HiddenFor(x => x.C_Rate)
+            @Html.HiddenFor(x => x.From_City)
+            @Html.HiddenFor(x => x.To_City)
+            @Html.HiddenFor(x => x.Invoice_No)
+            @Html.HiddenFor(x => x.Billty_No)
+            @Html.HiddenFor(x => x.Invoice_Amount)
+            @Html.HiddenFor(x => x.VAT_Amount)
+            @Html.HiddenFor(x => x.Freight)
+            @Html.HiddenFor(x => x.BillType)
+            @Html.HiddenFor(x => x.Code_2)
+
+            <div class="form-horizontal">
+                <fieldset>
+                    <legend>Add/Edit Invoice & Bilty</legend>
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <div class="col-md-12">
+                                    Recipient/Consignee
+                                    @Html.DropDownListFor(m => m.Company_Id, (SelectList)ViewBag.Companies, new { @class = "form-control combo" })
+                                    @Html.ValidationMessageFor(m => m.Company_Id)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="accordion">
+                        <div class="accordion-section">
+                            <a class="accordion-section-title" href="#accordion-1">Locked Detail</a>
+                            <div id="accordion-1" class="accordion-section-content">
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            <div class="col-md-4">
+                                                Invoice No<br />
+                                                @Html.TextBox("Invoice_No", Model.Invoice_No == 0 ? "0" : Model.Invoice_No.ToString(), new { @class = "form-control", @disabled = "disabled" })
+                                            </div>
+                                            <div class="col-md-4">
+                                                Bilty No<br />
+                                                @Html.TextBox("Billty_No", Model.Billty_No == 0 ? "0" : Model.Billty_No.ToString(), new { @class = "form-control", @disabled = "disabled" })
+                                            </div>
+                                            <div class="col-md-4">
+                                                Date<br />
+                                                @Html.TextBoxFor(model => model.Invoice_Date, "{0:dd/MMM/yyyy}", new { @class = "form-control" })
+                                                @Html.ValidationMessageFor(m => m.Invoice_Date)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            <div class="col-md-4">
+                                                Bill Type<br />
+                                                @Html.TextBoxFor(model => model.BillType, new { @class = "form-control", @disabled = "disabled" })
+                                            </div>
+                                            <div class="col-md-4">
+                                                From<br />
+                                                @Html.TextBox("From", Model.Company1 == null ? "" : Model.Company1.City, new { @class = "form-control", @disabled = "disabled" })
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                To<br />
+                                                @Html.TextBox("To", Model.Company == null ? "" : Model.Company.City, new { @class = "form-control", @disabled = "disabled" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            <div class="col-md-6">
+                                                Transport<br />
+                                                @Html.DropDownListFor(m => m.Transport_Id, (SelectList)ViewBag.Tranporter, "--select one--", new { @class = "form-control combo" })
+                                                @Html.ValidationMessageFor(m => m.Transport_Id)
+                                            </div>
+                                            <div class="col-md-6">
+                                            </div>
+                                        </div><!--end .accordion-section-content-->
+                                    </div><!--end .accordion-section-->
+                                </div>
+                                <!--end .accordion-->
+                            </div><!--end .accordion-section-content-->
+                        </div><!--end .accordion-section-->
+                    </div><!--end .accordion-->
+
+                    <table class="table table-responsive" style="margin-top:5px;margin-left:3px;width:100%">
+                        <tr>
+                            <td style="width:50%">
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            <div class="col-md-12">
+                                                Material @Html.Hidden("Rate")<br />
+                                                @Html.DropDownListFor(model => model.Product_Id, (SelectList)ViewBag.Products, "--select one Material--", new { @class = "form-control combo focus", })
+                                                @Html.ValidationMessageFor(model => model.Product_Id)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                Supplier Company<br />
+                                @Html.DropDownListFor(m => m.Supplier_Id, (SelectList)ViewBag.Supplier, "--select one --", new { @class = "form-control combo" })
+                                @Html.ValidationMessageFor(m => m.Supplier_Id)
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            <div class="col-md-4">
+                                                Truck No<br />
+                                                @Html.TextBox("Truck_No", Model.Truck_No, new { @maxlength="10", @class = "form-control" })
+                                                @Html.ValidationMessageFor(k => k.Truck_No)
+                                                @*@Html.DropDownListFor(k => k.Truck_No, (SelectList)ViewBag.TruckNo, "--select Truck No--", new { @class = "form-control combo" })
+                                                    @Html.ValidationMessageFor(k => k.Truck_No)
+                                                *@
+                                            </div>
+                                            <div class="col-md-4">
+                                                Weight (M.T.)<br />
+                                                @*{var formated = String.Format("{0:0.000}", Model.Weight);}*@
+                                                @Html.TextBoxFor(model => model.Weight, new { @maxlength = "6", @class = "form-control weight" })
+                                                @Html.ValidationMessageFor(model => model.Weight)
+                                            </div>
+                                            <div class="col-md-4">
+                                                Freight Rate<br />@Html.TextBoxFor(m => m.Code_1, new { @maxlength = "4", @class = "form-control" })
+                                                @Html.ValidationMessageFor(model => model.Code_1)
+                                            </div>
+                                            <div class="col-md-4" style="display:none">
+                                                Code 2<br />
+                                                @Html.TextBox("Code_2_txt", Model.Code_2, new { @class = "form-control", @disabled = "disabled" })
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            <div class="col-md-6">
+                                                Rolyalty No<br />
+                                                @Html.TextBoxFor(m => m.Royalty_No, new { @maxlength = "15", @class = "form-control" })
+                                                @Html.ValidationMessageFor(model => model.Royalty_No)
+                                            </div>
+                                            <div class="col-md-6">
+                                                Loading From<br />
+                                                @Html.DropDownListFor(m => m.Loading_Id, (SelectList)ViewBag.Loadings, "--select one Place--", new { @class = "form-control" })
+                                                @Html.ValidationMessageFor(model => model.Loading_Id)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            <div class="col-md-6">
+                                                P.O. No
+                                                @*{
+                                                    if (Model.Id == 0)
+                                                    {
+                                                        <i style="background-color:Aqua;padding:3px; color:Red">Last Issued No-</i> <b> @TempData["FormNo"] </b>
+                                                    }
+                                                }*@
+
+                                                <br />
+                                                @Html.TextBox("Form_No", Model.Form_No, new { @maxlength = "10", @class = "form-control" })
+                                                @Html.ValidationMessageFor(model => model.Form_No)
+                                                 <!-- Link-->
+                                                @*<a href="#" class="btn btn-info btn-md" data-toggle="modal" data-target="#countryModal">Add</a>*@
+
+
+                                            </div>
+                                            <div class="col-md-6">
+                                                Purchase Party Name
+                                                 <br />
+                                                @Html.TextBox("Remarks", Model.Remarks, new { @maxlength = "10", @class = "form-control" })
+                                                @Html.ValidationMessageFor(model => model.Remarks)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                            <div class="form-horizontal">
+                            <div class="form-group">
+                                 <div class="col-md-12">
+                                    <div class="col-md-6">
+                                        Advance
+                                        <br />@Html.TextBoxFor(m => m.Advance, new { @maxlength = "5", @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.Advance)                                           
+                                    </div>
+                                    <div class="col-md-6">
+                                        Secondory Transport<br />
+                                        @Html.DropDownListFor(model => model.Second_Transport_Id, (SelectList)ViewBag.Sub_Tranporters, "Other", new { @class = "form-control" })
+                                        @Html.ValidationMessageFor(model => model.Second_Transport_Id)
+                                    </div>
+                                  </div>
+                              </div>
+                            </div>
+                                
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            <div class="col-md-6">
+                                                Driver Name<br />
+                                                @Html.TextBoxFor(m => m.Driver_Name, new { @maxlength = "20", @class = "form-control" })
+                                            </div>
+                                            <div class="col-md-6">
+                                                Driver Address
+                                                <br />@Html.TextBoxFor(m => m.Driver_Address, new { @maxlength = "50", @class = "form-control" })
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            <div class="col-md-12">
+                                                Driver Licence No<br />
+                                                @Html.TextBoxFor(m => m.Driver_Licence, new { @maxlength = "15", @class = "form-control" })
+                                            </div>
+@*                                            <div class="col-md-6">
+                                                Remarks<br />
+                                                @Html.TextBoxFor(m => m.Remarks, new { @maxlength = "50", @class = "form-control" })
+                                            </div>
+*@                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Pan Card No<br />
+                                @Html.TextBoxFor(m => m.Pan_Card, new { @maxlength = "10",  @class = "form-control" })
+                                @Html.ValidationMessageFor(model => model.Pan_Card)
+                            </td>
+                            <td>
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            <div class="col-md-6">
+                                                Owner Name<br />
+                                                @Html.TextBoxFor(m => m.Owner_Name, new { @maxlength = "50", @class = "form-control Owner_Name" })
+                                                @Html.ValidationMessageFor(m => m.Owner_Name)
+                                            </div>
+                                            <div class="col-md-6">
+                                                TDS Tax in % <br />
+                                                @Html.TextBoxFor(m => m.TDS_Tax, new { @maxlength = "2", @class = "form-control TDS_Tax" })
+                                                @Html.ValidationMessageFor(m => m.TDS_Tax)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <tr style="background-color: lightgoldenrodyellow;">
+                            <td>
+                                <ul class="nav nav-pills">
+                                    <li><a href="#">Freight Amt.<span class="Frg_Amt badge">@Model.Freight</span></a></li>
+                                    <li><a href="#">Inv Amt. <span class="Invoice badge">@Model.Invoice_Amount</span></a></li>
+                                    <li><a href="#">VAT Amt. <span class="VAT badge">@Model.VAT_Amount</span></a></li>
+                                </ul>
+                            </td>
+                            <td>
+                                <ul class="nav nav-pills" style="float:right">
+                                    <li><a href="#">Freight Rate<span class="Frg_Rate badge">@Model.Freight_Rate </span></a></li>
+                                    <li><a href="#">Inv Rate <span class="Inv_Rate badge">@Model.B_Rate</span></a></li>
+                                    <li><a href="#">VAT (%) <span class="Vat_Rate badge">@Model.VAT_Rate</span></a></li>
+                                </ul>
+                            </td>
+                        </tr>
+                    </table>
+                </fieldset>
+            </div>
+            <div class="form-horizontal">
+                <div class="button" style="width: 100%;text-align:center">
+                    <div class="btn-group">
+                        <input type="submit" value="@(Model.Id == 0 ? "Save" : "Update")" class="btn btn-success btn-small" />
+                    </div>
+                    <div class="btn-group">
+                        @{
+                            if (Model.Id > 0)
+                            {
+                                <a href="/invoices/Delete/@Model.Id" class="btn btn-primary btn-small" onclick="return confirm('Are you sure to delete this invoice');">Delete</a>
+                            }
+                        }
+                    </div>
+                    <div class="btn-group">
+                        @Html.ActionLink("Back", "index", new { comp = Model.Company_Id }, new { @class = "btn btn-warning btn-small" })
+                    </div>
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal -->
+@*<div class="modal fade" id="countryModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Add Country</h4>
+        </div>
+        <div class="modal-body">
+            <div class="ajax-dynamic-get-data-form" />
+        </div>
+    </div>
+</div>
+</div>*@
+    </div>
+                            }
+@*
+<script>
+    $('#countryModal').on('show.bs.modal', function (event) {
+        var url = '@Url.Action("NewEmployee")';
+        $.ajax({
+            type: "GET",
+            url: url,
+            data: JSON,
+            cache: false,
+            success: function (data) {
+                $('#countryModal').find('.ajax-dynamic-get-data-form').html(data);
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    })
+</script>*@
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

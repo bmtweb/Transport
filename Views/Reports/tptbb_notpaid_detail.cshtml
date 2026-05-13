@@ -1,0 +1,114 @@
+﻿@model IEnumerable<Transport.Models.Invoice>
+
+@{
+    ViewBag.Title = "To Pay/To be billed Report (Not Paid Only)";
+    Layout = null;
+}
+
+<link type="text/css" href="~/Content/bootstrap.css" rel="stylesheet" />
+<link type="text/css" href="~/Content/report.css" rel="stylesheet" />
+<div class="main-1">
+    <div class="container">
+        <table class="table-condensed" style="width: 100%;">
+            <tr>
+                <th colspan='12' class="tblock"><b>@ViewBag.btype ( @ViewBag.ptype)</b></th>
+            </tr>
+            <tr>
+                <td colspan='12' style="text-align:center;font-size:14px;font-weight:bold">@ViewBag.From_Party</td>
+            </tr>
+            <tr>
+                <td colspan='12' style="text-align:center;"><span style="border:1px solid #ccc;padding:5px;border-radius:2px">@ViewBag.From_Date <b>TO</b> @ViewBag.To_Date</span></td>
+            </tr>
+            @if (@ViewBag.To_Party != "ALL")
+            {
+            <tr>
+                <td colspan='12' style="text-align:center;font-weight:600;border-top:none">@ViewBag.To_Party </td>
+            </tr>
+            }
+            
+            @if (@ViewBag.ttype != "ALL")
+            {
+            <tr>
+                <td colspan='12' style="text-align:center;font-weight:600;border-top:none">Secondary Transport :@ViewBag.ttype</td>
+            </tr>
+            }
+            @if (@ViewBag.bType == "To Pay")
+            {
+            <tr>
+                <th>S.NO</th>
+                <th>Bilty No</th>
+                <th>Bilty Date</th>
+                <th>Loading From</th>
+                <th>City</th>
+                <th>Truck No</th>
+                <th>Weight</th>
+                <th>CD2</th>
+                <th>Freight Amt</th>
+                <th>Advance</th>
+                <th>Due Amt</th>
+                <th>Remarks</th>
+            </tr>
+            }
+            else
+            { 
+            <tr>
+                <th>S.NO</th>
+                <th>Bilty No</th>
+                <th>Bilty Date</th>
+                <th>Loading From</th>
+                <th>City</th>
+                <th>Truck No</th>
+                <th>Weight</th>
+                <th>CD1</th>
+                <th>Freight Amt</th>
+                <th>Advance</th>
+                <th>Due Amt</th>
+                <th>Remarks</th>
+            </tr>
+            }
+            @foreach (var gitem in Model.GroupBy(x => new { x.Transport_Id, Transporter = x.Company1.Name }))
+            {
+                <tr>
+                    <th  colspan="12" class="grpblock2">@gitem.Key.Transporter</th>
+                </tr>
+                int I = 1;
+                foreach (var item in Model.Where(x => x.Transport_Id == gitem.Key.Transport_Id).ToArray())
+                {
+                <tr>
+                    <td>@(I++)</td>
+                    <td>@item.Billty_No</td>
+                    <td>@item.Invoice_Date.ToString("dd-MMM-yy")</td>
+                    <td>@item.Loading.Name</td>
+                    <td>@item.From_City</td>
+                    <td>@item.Truck_No</td>
+                    <td>@item.Weight</td>
+                    @if (@ViewBag.bType == "To Pay")
+                    {
+                        <td>@item.Code_2</td>
+                    }
+                    else
+                    {
+                        <td>@item.Code_1</td>
+                    }
+
+                    <td>@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", item.Deposit_Amount)</td>
+                    <td style="text-align: right;">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", item.Advance)</td>
+                    <td style="text-align: right;">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", (item.Deposit_Amount - item.Advance))</td>
+                    <td></td>
+                </tr>
+                }
+                <tr>
+                    <th colspan='6' class="grpblock2">Total :</th>
+                    <th style="text-align: right;">@Model.Where(x => x.Transport_Id == gitem.Key.Transport_Id).Sum(x => x.Weight)</th>
+                    <th  class="tblank"></th>
+                    <th style="text-align: right;">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Model.Where(x => x.Transport_Id == gitem.Key.Transport_Id).Sum(x => x.Deposit_Amount))</th>
+                    <th style="text-align: right;">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Model.Where(x => x.Transport_Id == gitem.Key.Transport_Id).Sum(x => x.Advance))</th>
+                    <th style="text-align: right;">@String.Format(new System.Globalization.CultureInfo("en-IN"), "{0:#,##}", Model.Where(x => x.Transport_Id == gitem.Key.Transport_Id).Sum(x => (x.Deposit_Amount - x.Advance))))</th>
+                    <th></th>
+                </tr>
+
+                }
+        </table>
+        <br />
+    </div>
+</div>

@@ -1,0 +1,57 @@
+﻿@model Transport.Models.User
+@{
+    ViewBag.Title = "SMS Billing Online";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    List<SelectListItem> fy = new List<SelectListItem>() { new SelectListItem() {  Text="2015-2016", Value= "2015/04/01-2016/03/31" } };
+    int i = 0;
+    DateTime year = Convert.ToDateTime(fy[i].Value.Split('-')[1]);
+    while ((System.DateTime.Now.Date > year))
+    {
+        year = year.AddYears(1);
+        fy.Add(new SelectListItem() { Text = year.AddYears(-1).Year + "-" + (year.Year), Value = year.AddYears(-1).Year + "/04/01-"+ (year.Year) +"/ 03/31" });
+        i++;
+    }
+}
+<!-- login -->
+<div class="main-1">
+    <div class="container">
+        <div class="login-page">
+            <div class="account_grid">
+                <div class="col-md-6 login-left wow fadeInLeft" data-wow-delay="0.4s" style="background:url(../Content/images/sms-main.png) no-repeat;height:300px">
+                </div>
+                @{
+                    DateTime dateOfBegin = @DateTime.Now();
+                    DateTime dateOfEnd = new DateTime(2023, 6, 24);
+                    var timeSpan = dateOfEnd.Subtract(dateOfBegin);
+                    var numOfDays = timeSpan.Days;
+                }
+                @using (Html.BeginForm())
+                {
+                    <div class="col-md-6 wow fadeInRight" data-wow-delay="0.4s">
+                        <h3>LOG IN</h3>
+                        <div>
+                            @Html.Label("User Id")<span><label>*</label></span>
+                            @Html.TextBoxFor(x => x.User_ID, new {@class="form-control" })
+                        </div>
+                        <div>
+                            @Html.Label("Password")<span><label>*</label></span>
+                            @Html.PasswordFor(x => x.Password, new {@class="form-control" })
+                        </div>
+                        <div>
+                            @Html.Label("Finacial Year")<span><label>*</label></span>
+                            @Html.DropDownList("fy",(fy.ToArray().OrderByDescending(x=> x.Text)), new { @class = "form-control" })
+                        </div>
+                        <div><br /></div>
+                        <div class="btn-group">
+                            <input type="submit" value="Login" class="btn btn-success btn-small"/>
+                            <input type="reset" value="Cancel" class="btn btn-info btn-small"/>
+                        </div>
+                    </div>
+                }
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- login -->
